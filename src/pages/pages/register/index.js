@@ -38,6 +38,7 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 // ** Demo Imports
 import FooterIllustrationsV1 from 'src/views/pages/auth/FooterIllustration'
 import toast from 'react-hot-toast'
+import { useRouter } from 'next/router'
 
 // ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
