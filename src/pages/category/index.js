@@ -2,10 +2,13 @@
 
 import { Box, Button, ListItem, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Typography } from '@mui/material'
 import Link from 'next/link';
-
-import React, { useState } from 'react'
+import { fetchCategories } from 'features/category/categorySlice';
+import React, { useEffect,  useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
 
 const index = () => {
+  const dispatch = useDispatch()
+  const {categories}= useSelector((state) => state.category)
     const headerStyle = {
         display: 'flex',
         justifyContent: 'space-between',
@@ -29,6 +32,11 @@ const index = () => {
       setRowsPerPage(+event.target.value)
       setPage(0)
     }
+
+    useEffect(() => {
+      if(categories.length===0)
+      dispatch(fetchCategories())
+    }, [dispatch])
   
 
     return (
@@ -60,24 +68,41 @@ const index = () => {
                 <TableCell sx={{ minWidth: 100 }}>
                     Parent
                 </TableCell>
+                
+                <TableCell sx={{ minWidth: 100 }}>
+                    Actions
+                </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             
-                <TableRow hover role='checkbox' tabIndex={-1} >
-                  
-                      <TableCell >
-                        Fruits
+                {
+                  categories.map((category) => (
+                    <TableRow key={category.id}>
+                      <TableCell>
+                        {category.name}
                       </TableCell>
-                      <TableCell >
-                        Fruits
+                      <TableCell>
+                        {category.description}
                       </TableCell>
-                      <TableCell >
-                        Fruits
+                      <TableCell>
+                        {category.parent}
                       </TableCell>
-                
-                  
-                </TableRow>
+                      <TableCell>
+                        <Stack direction="row" spacing={2}>
+                          <Link href={`/category/edit/${category.id}`}>
+                            <Button variant="contained" color="primary">
+                              Edit
+                            </Button>
+                          </Link>
+                          <Button variant="contained" color="error">
+                            Delete
+                          </Button>
+                        </Stack>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                }
               
           </TableBody>
         </Table>

@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import React from 'react'
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -21,9 +21,12 @@ import { useTheme } from '@mui/material/styles';
 // ** Icons Imports
 import EyeOutline from 'mdi-material-ui/EyeOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
-
+import { fetchCategories } from 'features/category/categorySlice'
+import { styled } from '@mui/material/styles';
 import Chip from '@mui/material/Chip';
 import { MenuItem, Select } from '@mui/material'
+import { useDispatch, useSelector } from 'react-redux'
+import { CloudUploadOutline } from 'mdi-material-ui'
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -58,8 +61,14 @@ function getStyles(name, personName, theme) {
   };
 }
 const index = () => {
-    const theme = useTheme();
-    const [personName, setPersonName] = useState([]);
+  const dispatch = useDispatch();
+  const { categories } = useSelector((state) => state.category);
+  useEffect(() => {
+    if (categories.length === 0)
+      dispatch(fetchCategories())
+  }, [dispatch])
+  const theme = useTheme();
+  const [personName, setPersonName] = useState([]);
   // ** States
   const [values, setValues] = useState({
     password: '',
@@ -72,7 +81,7 @@ const index = () => {
   })
 
   const handleChange = prop => event => {
-    
+
     setValues({ ...values, [prop]: event.target.value })
   }
   const handleChange2 = (event) => {
@@ -80,10 +89,20 @@ const index = () => {
       target: { value },
     } = event;
     setPersonName(
-      // On autofill we get a stringified value.
       typeof value === 'string' ? value.split(',') : value,
     );
   };
+  const VisuallyHiddenInput = styled('input')({
+    clip: 'rect(0 0 0 0)',
+    clipPath: 'inset(50%)',
+    height: 1,
+    overflow: 'hidden',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    whiteSpace: 'nowrap',
+    width: 1,
+  });
 
   const handleConfirmPassChange = prop => event => {
     setConfirmPassValues({ ...confirmPassValues, [prop]: event.target.value })
@@ -111,63 +130,67 @@ const index = () => {
               <TextField fullWidth label='Category Name' placeholder='Leonard Carter' />
             </Grid>
             <Grid item xs={12}>
-            <InputLabel id="demo-multiple-chip-label">Parent Category</InputLabel>
-        <Grid item xs={12}>
-        <Select
-          labelId="demo-multiple-chip-label"
-          id="demo-multiple-chip"
-          multiple
-          value={personName}
-          onChange={handleChange2}
-          input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
-          renderValue={(selected) => (
-            
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-              {selected.map((value) => (
-                <Chip key={value} label={value} />
-              ))}
-            </Box>
-          )}
-          MenuProps={MenuProps}
-        >
-          {names.map((name) => (
-            <MenuItem
-              key={name}
-              value={name}
-              style={getStyles(name, personName, theme)}
+            <Button
+              component="label"
+              role={undefined}
+              variant="contained"
+              tabIndex={-1}
+              startIcon={<CloudUploadOutline />}
             >
-              {name}
-            </MenuItem>
-          ))}
-        </Select>
-        </Grid>
+              Upload file
+              <VisuallyHiddenInput type="file" />
+            </Button>
+            </Grid>
+            <Grid item xs={12}>
+              <InputLabel id="demo-multiple-chip-label">Parent Category</InputLabel>
+              <Grid item xs={12}>
+                <Select
+                  labelId="demo-multiple-chip-label"
+                  id="demo-multiple-chip"
+                  multiple
+                  value={personName}
+                  onChange={handleChange2}
+                  input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+                  renderValue={(selected) => (
+
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                      {selected.map((value) => (
+                        <Chip key={value} label={value} />
+                      ))}
+                    </Box>
+                  )}
+                  MenuProps={MenuProps}
+                >
+                  {categories.map((cat) => (
+                    <MenuItem
+                      key={cat?.id}
+                      value={cat?.name}
+                      style={getStyles(name, personName, theme)}
+                    >
+                      {cat?.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </Grid>
             </Grid>
             <Grid item xs={12}>
               <FormControl fullWidth>
-                <InputLabel htmlFor='form-layouts-basic-password'>Password</InputLabel>
-                <OutlinedInput
-                  label='Password'
-                  value={values.password}
-                  id='form-layouts-basic-password'
-                  onChange={handleChange('password')}
-                  type={values.showPassword ? 'text' : 'password'}
-                  aria-describedby='form-layouts-basic-password-helper'
-                  endAdornment={
-                    <InputAdornment position='end'>
-                      <IconButton
-                        edge='end'
-                        onClick={handleClickShowPassword}
-                        onMouseDown={handleMouseDownPassword}
-                        aria-label='toggle password visibility'
-                      >
-                        {values.showPassword ? <EyeOutline /> : <EyeOffOutline />}
-                      </IconButton>
-                    </InputAdornment>
-                  }
+
+                <TextField
+                  fullWidth
+                  multiline
+                  minRows={3}
+                  label='Description (Optional)'
+                  placeholder='Description...'
+                  sx={{ '& .MuiOutlinedInput-root': { alignItems: 'baseline' } }}
+                // InputProps={{
+                //   startAdornment: (
+                //     <InputAdornment position='start'>
+                //       <MessageOutline />
+                //     </InputAdornment>
+                //   )
+                // }}
                 />
-                <FormHelperText id='form-layouts-basic-password-helper'>
-                  Use 8 or more characters with a mix of letters, numbers & symbols
-                </FormHelperText>
               </FormControl>
             </Grid>
             <Grid item xs={12}>

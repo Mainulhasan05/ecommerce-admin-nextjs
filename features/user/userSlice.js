@@ -3,6 +3,7 @@ import { getUser } from "./userAPI";
 
 const initialState = {
     user: null,
+    category:[],
     loading: false,
     error: null
 };
