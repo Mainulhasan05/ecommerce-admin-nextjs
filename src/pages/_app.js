@@ -1,7 +1,7 @@
 // ** Next Imports
 import Head from 'next/head'
 import { Router } from 'next/router'
-
+import { Analytics } from '@vercel/analytics/react';
 // ** Loader Import
 import NProgress from 'nprogress'
 import store from '../../store/store';
@@ -54,6 +54,7 @@ const App = props => {
     <Provider store={store}>
     <CacheProvider value={emotionCache}>
       <Toaster position="top-right" toast={toast} />
+      <Analytics/>
       <Head>
         <title>{`${themeConfig.templateName} - Material Design React Admin Template`}</title>
         <meta
