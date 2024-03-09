@@ -3,7 +3,7 @@ const path = require('path')
 module.exports = {
   
   env:{
-    API_URL: "https://api.rifatewu.xyz",
+    API_URL: "https://api.rifatewu2.xyz",
   },
   webpack: config => {
     config.resolve.alias = {

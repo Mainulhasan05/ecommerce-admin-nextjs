@@ -5,8 +5,7 @@ import Cookies from 'js-cookie';
 
 const axiosInstance = axios.create({
   baseURL: process.env.API_URL,
-  timeout: 5000, // Set your desired timeout
-  // You can also add other configuration options here as needed
+  timeout: 50000, // Set your desired timeout
 });
 
 // Add a request interceptor to set the Authorization header
