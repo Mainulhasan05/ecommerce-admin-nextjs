@@ -64,7 +64,7 @@ const index = () => {
   const [categoryObj, setcategoryObj] = useState({
     name:"",
     description:"",
-    parentCategory:null,
+    parentId:null,
     sortValue:0,
     image:""
   })
@@ -82,7 +82,8 @@ const index = () => {
     const formData = new FormData()
     formData.append('name', categoryObj.name)
     formData.append('description', categoryObj.description)
-    formData.append('parentCategory', categoryObj.parentCategory)
+    formData.append('parentId', categoryObj.parentId)
+    formData.append('sortValue', categoryObj.sortValue)
     formData.append('image', file)
     try {
       // dispatch(addCategory(categoryObj))
@@ -252,7 +253,7 @@ const index = () => {
                 }}
               >
                 <Button onClick={handleSubmit} type='submit' variant='contained' size='large'>
-                  Get Started!
+                  Create
                 </Button>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   <Typography sx={{ mr: 2 }}>Already have an account?</Typography>
