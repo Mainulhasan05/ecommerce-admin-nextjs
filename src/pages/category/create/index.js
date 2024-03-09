@@ -21,7 +21,7 @@ import { useTheme } from '@mui/material/styles';
 // ** Icons Imports
 import EyeOutline from 'mdi-material-ui/EyeOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
-import { fetchCategories } from 'features/category/categorySlice'
+import { fetchCategories,addCategory } from 'features/category/categorySlice'
 import { styled } from '@mui/material/styles';
 import Chip from '@mui/material/Chip';
 import { MenuItem, Select } from '@mui/material'
@@ -41,18 +41,6 @@ const MenuProps = {
   },
 };
 
-const names = [
-  'Oliver Hansen',
-  'Van Henry',
-  'April Tucker',
-  'Ralph Hubbard',
-  'Omar Alexander',
-  'Carlos Abbott',
-  'Miriam Wagner',
-  'Bradley Wilkerson',
-  'Virginia Andrews',
-  'Kelly Snyder',
-];
 
 function getStyles(name, personName, theme) {
   return {
@@ -72,20 +60,46 @@ const index = () => {
   const theme = useTheme();
   const [personName, setPersonName] = useState([]);
   // ** States
-  const [values, setValues] = useState({
-    password: '',
-    showPassword: false
+  const [file, setFile] = useState(null)
+  const [categoryObj, setcategoryObj] = useState({
+    name:"",
+    description:"",
+    parentCategory:null,
+    sortValue:0,
+    image:""
   })
 
-  const [confirmPassValues, setConfirmPassValues] = useState({
-    password: '',
-    showPassword: false
-  })
-
-  const handleChange = prop => event => {
-
-    setValues({ ...values, [prop]: event.target.value })
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setcategoryObj({ ...categoryObj, [name]: value })
+    
   }
+
+  const handleSubmit = async (e) => {
+    
+    e.preventDefault()
+    
+    const formData = new FormData()
+    formData.append('name', categoryObj.name)
+    formData.append('description', categoryObj.description)
+    formData.append('parentCategory', categoryObj.parentCategory)
+    formData.append('image', file)
+    try {
+      // dispatch(addCategory(categoryObj))
+      const response=await dispatch(addCategory(formData))
+      if(response.payload.success){
+        toast.success(response?.payload?.message)
+      }
+      else{
+        toast.error(response?.payload?.message)
+      }
+      
+    }
+    catch (error) {
+      toast.error('Category Creation Failed')
+    }
+  }
+
   const handleChange2 = (event) => {
     const {
       target: { value },
@@ -94,6 +108,8 @@ const index = () => {
       typeof value === 'string' ? value.split(',') : value,
     );
   };
+
+
   const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
     clipPath: 'inset(50%)',
@@ -121,6 +137,19 @@ const index = () => {
   const handleMouseDownPassword = event => {
     event.preventDefault()
   }
+  const handleFileChange = (event) => {
+    const selectedFile = event.target.files[0];
+    setFile(selectedFile);
+
+    // Optional: if you want to show the selected image on UI
+    const reader = new FileReader();
+    reader.onload = () => {
+      // Do something with the uploaded image data
+      const imageDataUrl = reader.result;
+      // Here, you can set imageDataUrl to state or directly display it in UI
+    };
+    reader.readAsDataURL(selectedFile);
+  };
 
   return (
     <Card>
@@ -129,24 +158,38 @@ const index = () => {
         <form onSubmit={e => e.preventDefault()}>
           <Grid container spacing={5}>
             <Grid item xs={12}>
-              <TextField fullWidth label='Category Name' placeholder='Leonard Carter' />
+              <TextField name='name' onChange={handleChange} fullWidth label='Category Name' placeholder='Leonard Carter' />
             </Grid>
             <Grid item xs={12}>
             <Button
               component="label"
               role={undefined}
               variant="contained"
-              tabIndex={-1}
+              tabIndex={-1}              
               startIcon={<CloudUploadOutline />}
             >
               Upload file
-              <VisuallyHiddenInput type="file" />
+              <VisuallyHiddenInput  onChange={handleFileChange} type="file" />
             </Button>
+            <div>
+        {/* Optional: Show selected image preview */}
+        {file && (
+          <img src={URL.createObjectURL(file)} alt="Selected file" style={{ maxWidth: '100%' }} />
+        )}
+      </div>
             </Grid>
             <Grid item xs={12}>
               <InputLabel id="demo-multiple-chip-label">Parent Category</InputLabel>
               <Grid item xs={12}>
-                <Select
+                <select className='form-control' onChange={handleChange} name="parentId" id="">
+                  <option value="">Select Parent Category</option>
+                  {categories.map((cat) => (
+                    <option key={cat?.id} value={cat?.id}>
+                      {cat?.name}
+                    </option>
+                  ))}
+                </select>
+                {/* <Select
                   labelId="demo-multiple-chip-label"
                   id="demo-multiple-chip"
                   multiple
@@ -172,7 +215,7 @@ const index = () => {
                       {cat?.name}
                     </MenuItem>
                   ))}
-                </Select>
+                </Select> */}
               </Grid>
             </Grid>
             <Grid item xs={12}>
@@ -181,6 +224,8 @@ const index = () => {
                 <TextField
                   fullWidth
                   multiline
+                  name='description'
+                  onChange={handleChange}
                   minRows={3}
                   label='Description (Optional)'
                   placeholder='Description...'
@@ -195,34 +240,7 @@ const index = () => {
                 />
               </FormControl>
             </Grid>
-            <Grid item xs={12}>
-              <FormControl fullWidth>
-                <InputLabel htmlFor='form-layouts-confirm-password'>Confirm Password</InputLabel>
-                <OutlinedInput
-                  label='Confirm Password'
-                  value={confirmPassValues.password}
-                  id='form-layouts-confirm-password'
-                  onChange={handleConfirmPassChange('password')}
-                  aria-describedby='form-layouts-confirm-password-helper'
-                  type={confirmPassValues.showPassword ? 'text' : 'password'}
-                  endAdornment={
-                    <InputAdornment position='end'>
-                      <IconButton
-                        edge='end'
-                        onClick={handleClickConfirmPassShow}
-                        onMouseDown={handleMouseDownPassword}
-                        aria-label='toggle password visibility'
-                      >
-                        {confirmPassValues.showPassword ? <EyeOutline /> : <EyeOffOutline />}
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                />
-                <FormHelperText id='form-layouts-confirm-password-helper'>
-                  Make sure to type the same password as above
-                </FormHelperText>
-              </FormControl>
-            </Grid>
+           
             <Grid item xs={12}>
               <Box
                 sx={{
@@ -233,7 +251,7 @@ const index = () => {
                   justifyContent: 'space-between'
                 }}
               >
-                <Button type='submit' variant='contained' size='large'>
+                <Button onClick={handleSubmit} type='submit' variant='contained' size='large'>
                   Get Started!
                 </Button>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>

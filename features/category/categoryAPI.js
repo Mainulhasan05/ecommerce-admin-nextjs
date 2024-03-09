@@ -27,9 +27,10 @@ export const updateCategory = async (data) => {
     }
     }
 
-export const deleteCategory = async (data) => {
+export const deleteCategory = async (id) => {
     try {
-        const response = await axiosInstance.delete('/seller/category', {data});
+        console.log("atodur aslam bal")
+        const response = await axiosInstance.delete('/seller/category/'+id);
         return response.data;
     } catch (error) {
         throw error;

@@ -88,7 +88,7 @@ export const categorySlice = createSlice({
             })
             .addCase(addCategory.fulfilled, (state, action) => {
                 state.loading = false;
-                state.categories = action.payload?.data;
+                state.categories = state.categories.concat({ ...action.payload?.data});
             })
             .addCase(addCategory.rejected, (state, action) => {
                 state.loading = false;
@@ -110,7 +110,7 @@ export const categorySlice = createSlice({
             })
             .addCase(removeCategory.fulfilled, (state, action) => {
                 state.loading = false;
-                state.categories = action.payload?.data;
+                state.categories = state.categories.filter(category => category.id !== action.meta?.arg);
             })
             .addCase(removeCategory.rejected, (state, action) => {
                 state.loading = false;

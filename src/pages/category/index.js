@@ -2,7 +2,7 @@
 
 import { Box, Button, ListItem, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Typography } from '@mui/material'
 import Link from 'next/link';
-import { fetchCategories } from 'features/category/categorySlice';
+import { fetchCategories,removeCategory } from 'features/category/categorySlice';
 import React, { useEffect,  useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -37,7 +37,12 @@ const index = () => {
       if(categories.length===0)
       dispatch(fetchCategories())
     }, [dispatch])
-  
+
+    const handleDelete = (id) => {
+      console.log(id)
+      dispatch(removeCategory(id))
+    }
+
 
     return (
         <div>
@@ -57,7 +62,10 @@ const index = () => {
         <Table stickyHeader aria-label='sticky table'>
           <TableHead>
             <TableRow>
-              
+            <TableCell sx={{ minWidth: 100 }}>
+                    Image
+                  
+                </TableCell>
                 <TableCell sx={{ minWidth: 100 }}>
                     Name
                   
@@ -80,6 +88,9 @@ const index = () => {
                   categories.map((category) => (
                     <TableRow key={category.id}>
                       <TableCell>
+                        <img src={process.env.API_URL+category.image} alt={category.name} style={{ width: '50px' }} />
+                      </TableCell>
+                      <TableCell>
                         {category.name}
                       </TableCell>
                       <TableCell>
@@ -95,7 +106,10 @@ const index = () => {
                               Edit
                             </Button>
                           </Link>
-                          <Button variant="contained" color="error">
+                          <Button onClick={()=>{
+                            handleDelete(category.id)
+                            console.log("huss")
+                          }} variant="contained" color="error">
                             Delete
                           </Button>
                         </Stack>
