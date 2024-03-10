@@ -18,6 +18,16 @@ const navigation = () => {
       path: '/'
     },
     {
+      title:'Banners',
+      icon:CubeOutline,
+      path:'/banners'
+    },
+    {
+      title:'Products',
+      icon:CubeOutline,
+      path:'/products'
+    },
+    {
       title:'Category',
       icon:CubeOutline,
       path:'/category'
