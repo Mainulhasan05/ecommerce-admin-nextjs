@@ -10,3 +10,12 @@ export const getUser = async () => {
     }
     };
 
+    export const getMyShop = async () => {
+        try {
+            const response = await axiosInstance.get('/seller/my-shop');
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    };
+

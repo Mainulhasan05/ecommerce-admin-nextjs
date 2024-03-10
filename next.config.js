@@ -4,6 +4,7 @@ module.exports = {
   
   env:{
     API_URL: "https://api.rifatewu2.xyz",
+    // API_URL:"http://localhost:5000"
   },
   webpack: config => {
     config.resolve.alias = {
