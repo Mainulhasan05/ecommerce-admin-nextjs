@@ -4,6 +4,8 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { FormControl, MenuItem, Select, TextField } from '@mui/material';
+import { useDispatch } from 'react-redux';
+import { addBanner } from 'features/banner/bannerSlice';
 
 
 const style = {
@@ -19,10 +21,11 @@ const style = {
 };
 
 export default function AddBanner() {
+  const dispatch=useDispatch();
   const [open, setOpen] = useState(false);
     const [file, setFile] = useState(null);
   const [bannerObj, setBannerObj] = useState({
-    type: '',
+    type: 'home',
     sortValue: 0,
     pageUrl: '/',
     buttonText: '',
@@ -31,9 +34,9 @@ export default function AddBanner() {
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-// wants to show the selected image
+
     const handleFileChange = (e) => {
-        setFile(URL.createObjectURL(e.target.files[0]));
+        setFile(e.target.files[0]);
     };
     const handleInputChange = (e) => {
         setBannerObj({ ...bannerObj, [e.target.name]: e.target.value });
@@ -41,7 +44,15 @@ export default function AddBanner() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(bannerObj);
+        // use try catch and if there is image then use form data
+        const formData = new FormData();
+        formData.append('image', file);
+        formData.append('type', bannerObj.type);
+        formData.append('sortValue', bannerObj.sortValue);
+        formData.append('pageUrl', bannerObj.pageUrl);
+        formData.append('buttonText', bannerObj.buttonText);
+        formData.append('status', bannerObj.status);
+        dispatch(addBanner(formData));
     }
 
   return (
@@ -57,7 +68,7 @@ export default function AddBanner() {
           <Typography id="modal-modal-title" variant="h6" component="h2">
             Add Banner
           </Typography>
-          {/* imageUrl: {
+          {/* image: {
         type: DataTypes.STRING,
         allowNull: false
     },
@@ -89,7 +100,7 @@ export default function AddBanner() {
     <FormControl>
     {/* change to file upload and show the selected file here */}
     <input type="file" onChange={handleFileChange} />
-    {file && <img src={file} alt="banner" style={{ width: '100px' }} />}
+    {file && <img src={URL.createObjectURL(file)} alt="banner" style={{ width: '100px' }} />}
 
     </FormControl>
     <FormControl>

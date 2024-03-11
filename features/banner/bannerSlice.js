@@ -69,7 +69,7 @@ export const bannerSlice = createSlice({
         })
         .addCase(addBanner.fulfilled, (state, action) => {
             state.loading = false;
-            state.banners.push(action.payload);
+            state.banners = state.banners.concat({ ...action.payload?.data});
         })
         .addCase(addBanner.rejected, (state, action) => {
             state.loading = false;
