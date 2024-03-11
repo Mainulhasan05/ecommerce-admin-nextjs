@@ -59,6 +59,23 @@ const FormControlLabel = styled(MuiFormControlLabel)(({ theme }) => ({
   }
 }))
 
+export const getServerSideProps = async (context) => {
+  const token = context.req.cookies.token
+  // if token is present, redirect to the / 
+  if (token) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    }
+  }
+  return {
+    props: {  },
+  }
+}
+
+
 const LoginPage = () => {
   // ** State
   const [userObj, setUserObj] = useState({

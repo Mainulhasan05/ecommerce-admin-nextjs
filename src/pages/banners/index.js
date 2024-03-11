@@ -6,7 +6,7 @@ import { fetchCategories,removeCategory } from 'features/category/categorySlice'
 import { fetchBanners } from 'features/banner/bannerSlice';
 import React, { useEffect,  useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-
+import AddBanner from 'components/banner/add_banner';
 const index = () => {
   const dispatch = useDispatch()
   const {categories}= useSelector((state) => state.category)
@@ -54,9 +54,11 @@ const index = () => {
                 <Typography variant="h6" style={categoryTextStyle}>
                     Banners {banners.length}
                 </Typography>
+                <AddBanner/>
                 <Link href="/category/create">
                     <Button variant="contained" color="primary">
                         Add Banner
+                        
                     </Button>
                 </Link>
             </div>
