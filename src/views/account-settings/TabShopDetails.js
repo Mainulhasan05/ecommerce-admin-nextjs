@@ -97,7 +97,9 @@ const TabShopDetails = () => {
       const response = await axiosInstance.post('/seller/shop', formData)
       console.log(response)
       if(response.status===201){
-        toast.success('Shop Created Successfully')
+        toast.success(response.data?.message)
+        setShopObj(response.data?.data)
+
       }
     } catch (error) {
       console.log(error)
@@ -106,8 +108,7 @@ const TabShopDetails = () => {
 
   const handleUpdate = async (e) => {
     e.preventDefault()
-    alert("under construction")
-    return
+    
     try {
       // convert the inputs into form data
       const formData = new FormData()
@@ -116,9 +117,14 @@ const TabShopDetails = () => {
       }
       // take the image from the state and append it to the form data
       const imageFile = document.querySelector('input[type="file"]').files[0];
-      formData.append('image', imageFile);
+      formData.set('image', imageFile);
+      if (imageFile) {
+        formData.set('image', imageFile);
+    } else {
+        
+    }
       // /seller/shop, put request
-      const response = await axiosInstance.put('/seller/shop', formData)
+      const response = await axiosInstance.put('/seller/shop/'+shopObj?.id, formData)
       console.log(response)
       if(response.status===200){
         toast.success('Shop Updated Successfully')
