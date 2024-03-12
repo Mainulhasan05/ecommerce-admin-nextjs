@@ -1,15 +1,17 @@
-
-
 import { Box, Button, ListItem, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Typography } from '@mui/material'
 import Link from 'next/link';
-import { fetchCategories,removeCategory } from 'features/category/categorySlice';
-import { fetchBanners } from 'features/banner/bannerSlice';
+import { fetchBanners,removeBanner, setBanner } from 'features/banner/bannerSlice';
+
 import React, { useEffect,  useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import AddBanner from 'components/banner/add_banner';
+import EditBanner from 'components/banner/edit_banner';
+
 const index = () => {
   const dispatch = useDispatch()
-  const {categories}= useSelector((state) => state.category)
+  const [openAddBanner, setOpenAddBanner] = useState(false);
+  const [openEditBanner, setOpenEditBanner] = useState(false);
+  
   const {banners}= useSelector((state) => state.banner)
 
     const headerStyle = {
@@ -42,8 +44,7 @@ const index = () => {
     }, [dispatch])
 
     const handleDelete = (id) => {
-      
-      dispatch(removeCategory(id))
+      dispatch(removeBanner(id))
     }
 
 
@@ -54,13 +55,11 @@ const index = () => {
                 <Typography variant="h6" style={categoryTextStyle}>
                     Banners {banners.length}
                 </Typography>
-                <AddBanner/>
-                <Link href="/category/create">
-                    <Button variant="contained" color="primary">
-                        Add Banner
-                        
-                    </Button>
-                </Link>
+                <div>
+                <AddBanner open={openAddBanner} setOpen={setOpenAddBanner}/>
+                <EditBanner open={openEditBanner} setOpen={setOpenEditBanner}/>
+                </div>
+                
             </div>
             <Paper sx={{ width: '100%', overflow: 'hidden' }}>
       <TableContainer sx={{ maxHeight: 440 }}>
@@ -72,14 +71,14 @@ const index = () => {
                   
                 </TableCell>
                 <TableCell sx={{ minWidth: 100 }}>
-                    Name
+                    Page URL
                   
                 </TableCell>
                 <TableCell sx={{ minWidth: 100 }}>
-                    Description
+                    Button Text
                 </TableCell>
                 <TableCell sx={{ minWidth: 100 }}>
-                    Parent
+                    Status
                 </TableCell>
                 
                 <TableCell sx={{ minWidth: 100 }}>
@@ -90,29 +89,36 @@ const index = () => {
           <TableBody>
             
                 {
-                  categories.map((category) => (
-                    <TableRow key={category.id}>
+                  banners.map((banner) => (
+                    <TableRow key={banner.id}>
                       <TableCell>
-                        <img src={process.env.API_URL+category.image} alt={category.name} style={{ width: '50px' }} />
+                        <img src={process.env.API_URL+banner.imageUrl} alt={banner.name} style={{ width: '50px' }} />
                       </TableCell>
                       <TableCell>
-                        {category.name}
+                        {banner.pageUrl}
                       </TableCell>
                       <TableCell>
-                        {category.description}
+                        {banner.buttonText}
                       </TableCell>
                       <TableCell>
-                        {category.parent}
+                        {banner.status}
                       </TableCell>
                       <TableCell>
                         <Stack direction="row" spacing={2}>
-                          <Link href={`/category/edit/${category.id}`}>
-                            <Button variant="contained" color="primary">
+                          
+                            <Button
+                            onClick={() => {
+                              dispatch(setBanner(banner))
+                              setOpenEditBanner(true)
+                            }
+                            }
+
+                             variant="contained" color="primary">
                               Edit
                             </Button>
-                          </Link>
+                          
                           <Button onClick={()=>{
-                            handleDelete(category.id)
+                            handleDelete(banner.id)
                             console.log("huss")
                           }} variant="contained" color="error">
                             Delete

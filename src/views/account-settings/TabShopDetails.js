@@ -99,7 +99,6 @@ const TabShopDetails = () => {
       if(response.status===201){
         toast.success(response.data?.message)
         setShopObj(response.data?.data)
-
       }
     } catch (error) {
       console.log(error)
@@ -110,12 +109,11 @@ const TabShopDetails = () => {
     e.preventDefault()
     
     try {
-      // convert the inputs into form data
+      
       const formData = new FormData()
       for (const key in shopObj) {
         formData.append(key, shopObj[key])
       }
-      // take the image from the state and append it to the form data
       const imageFile = document.querySelector('input[type="file"]').files[0];
       formData.set('image', imageFile);
       if (imageFile) {

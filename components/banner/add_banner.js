@@ -20,9 +20,9 @@ const style = {
   p: 4,
 };
 
-export default function AddBanner() {
+export default function AddBanner({open,setOpen}) {
   const dispatch=useDispatch();
-  const [open, setOpen] = useState(false);
+  
     const [file, setFile] = useState(null);
   const [bannerObj, setBannerObj] = useState({
     type: 'home',
@@ -53,11 +53,13 @@ export default function AddBanner() {
         formData.append('buttonText', bannerObj.buttonText);
         formData.append('status', bannerObj.status);
         dispatch(addBanner(formData));
+        
+        handleClose();
     }
 
   return (
     <div>
-      <Button onClick={handleOpen}>Open modal</Button>
+      <Button onClick={handleOpen} variant="contained" color="primary">Add Banner</Button>
       <Modal
         open={open}
         onClose={handleClose}
@@ -68,37 +70,8 @@ export default function AddBanner() {
           <Typography id="modal-modal-title" variant="h6" component="h2">
             Add Banner
           </Typography>
-          {/* image: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    type: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        defaultValue: 'home'
-    },
-    sortValue: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue: 0
-    },
-    pageUrl: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        defaultValue: '/'
-    },
-    buttonText:{
-        type: DataTypes.STRING,
-        allowNull: true
-    },
-    status: {
-        type: DataTypes.ENUM('active', 'inactive'),
-        allowNull: false,
-        defaultValue: 'inactive'
-    }, */}
-    {/* create form for the above fields */}
+        
     <FormControl>
-    {/* change to file upload and show the selected file here */}
     <input type="file" onChange={handleFileChange} />
     {file && <img src={URL.createObjectURL(file)} alt="banner" style={{ width: '100px' }} />}
 

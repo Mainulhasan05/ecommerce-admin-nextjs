@@ -20,7 +20,8 @@ export const createBanner = async (data) => {
 
 export const updateBanner = async (data) => {
     try {
-        const response = await axiosInstance.put('/seller/banner', data);
+        
+        const response = await axiosInstance.put('/seller/banner/'+data?.get('id'), data);
         return response.data;
     } catch (error) {
         throw error;

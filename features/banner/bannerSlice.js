@@ -58,7 +58,7 @@ export const bannerSlice = createSlice({
         })
         .addCase(fetchBanners.fulfilled, (state, action) => {
             state.loading = false;
-            state.banners = action.payload;
+            state.banners = action.payload?.data;
         })
         .addCase(fetchBanners.rejected, (state, action) => {
             state.loading = false;
@@ -81,8 +81,8 @@ export const bannerSlice = createSlice({
         .addCase(editBanner.fulfilled, (state, action) => {
             state.loading = false;
             state.banners = state.banners.map((banner) => {
-                if(banner._id === action.payload._id){
-                    return action.payload;
+                if(banner.id === action.payload?.data.id){
+                    return action.payload?.data;
                 }
                 return banner;
             })
