@@ -97,7 +97,7 @@ const index = () => {
                         {category.description}
                       </TableCell>
                       <TableCell>
-                        {category.parent}
+                        {category.parentId}
                       </TableCell>
                       <TableCell>
                         <Stack direction="row" spacing={2}>

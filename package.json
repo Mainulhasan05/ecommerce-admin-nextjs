@@ -52,6 +52,7 @@
     "@mui/material": "^5.4.3",
     "@popperjs/core": "^2.11.2",
     "@reduxjs/toolkit": "^2.2.1",
+    "@tinymce/tinymce-react": "^4.3.2",
     "@vercel/analytics": "^1.2.2",
     "apexcharts-clevision": "3.28.5",
     "axios": "^1.6.7",
