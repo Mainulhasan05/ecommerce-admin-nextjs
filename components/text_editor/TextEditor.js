@@ -13,6 +13,7 @@ export default function App({initialValue,onChange}) {
         }}
         onInit={(evt, editor) => editorRef.current = editor}
         initialValue={initialValue}
+        
         init={{
           height: 500,
           menubar: true,

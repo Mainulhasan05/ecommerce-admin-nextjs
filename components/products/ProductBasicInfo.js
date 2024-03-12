@@ -16,7 +16,7 @@ import TextEditor from '../text_editor/TextEditor';
 import CardContent from '@mui/material/CardContent'
 import FormControl from '@mui/material/FormControl'
 import Button from '@mui/material/Button'
-import { fetchShop } from 'features/user/userSlice'
+import { addProduct } from 'features/product/productSlice'
 // ** Icons Imports
 import Close from 'mdi-material-ui/Close'
 import toast from 'react-hot-toast'
@@ -48,7 +48,7 @@ const ResetButtonStyled = styled(Button)(({ theme }) => ({
 
 const ProductBasicInfo = () => {
   const dispatch=useDispatch()
-  const {shop}=useSelector(state=>state.user)
+    
   const [productObj, setProductObj] = useState({
     name: '',
     description:'',
@@ -89,24 +89,16 @@ const ProductBasicInfo = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log(productObj)
-    return
+    // convert the inputs into form data, send all images and other data to the server
     try {
-      // convert the inputs into form data
       const formData = new FormData()
       for (const key in productObj) {
         formData.append(key, productObj[key])
       }
-      // take the image from the state and append it to the form data
-      const imageFile = document.querySelector('input[type="file"]').files[0];
-      formData.append('image', imageFile);
-      // /seller/shop, post request
-      const response = await axiosInstance.post('/seller/shop', formData)
-      console.log(response)
-      if(response.status===201){
-        toast.success(response.data?.message)
-        setProductObj(response.data?.data)
-      }
+      files.forEach((file) => {
+        formData.append('images', file);
+      });
+      dispatch(addProduct(formData))
     } catch (error) {
       console.log(error)
     }
@@ -206,6 +198,17 @@ const ProductBasicInfo = () => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
+          <FormControl fullWidth>
+              <InputLabel>Status</InputLabel>
+              <Select
+              name='status'
+                onChange={handleChange}
+              value={productObj.status}
+                label='Status' >
+                <MenuItem value='active'>Active</MenuItem>
+                <MenuItem value='inactive'>Inactive</MenuItem>
+              </Select>
+            </FormControl>
             <FormControl fullWidth>
               <InputLabel>Status</InputLabel>
               <Select
