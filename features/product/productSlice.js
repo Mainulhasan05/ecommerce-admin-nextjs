@@ -66,7 +66,7 @@ export const productSlice = createSlice({
         })
         .addCase(fetchProducts.fulfilled, (state, action) => {
             state.loading = false;
-            state.products = action.payload;
+            state.products = action.payload?.data;
         })
         .addCase(fetchProduct.pending, (state) => {
             state.loading = true;
@@ -80,7 +80,7 @@ export const productSlice = createSlice({
         })
         .addCase(addProduct.fulfilled, (state, action) => {
             state.loading = false;
-            state.products.push(action.payload);
+            state.products.push(action.payload?.data);
         })
         .addCase(editProduct.pending, (state) => {
             state.loading = true;

@@ -1,103 +1,147 @@
-// ** React Imports
-import { useState } from 'react'
 
-// ** MUI Imports
-import Box from '@mui/material/Box'
-import Card from '@mui/material/Card'
-import TabList from '@mui/lab/TabList'
-import TabPanel from '@mui/lab/TabPanel'
-import TabContext from '@mui/lab/TabContext'
-import { styled } from '@mui/material/styles'
-import MuiTab from '@mui/material/Tab'
 
-// ** Icons Imports
-import AccountOutline from 'mdi-material-ui/AccountOutline'
-import LockOpenOutline from 'mdi-material-ui/LockOpenOutline'
-import InformationOutline from 'mdi-material-ui/InformationOutline'
-
-// ** Demo Tabs Imports
-import TabAccount from 'src/views/account-settings/TabAccount'
-import ProductBasicInfo from '../../../components/products/ProductBasicInfo';
-import TabInfo from 'src/views/account-settings/TabSecurity'
-
-// ** Third Party Styles Imports
-import 'react-datepicker/dist/react-datepicker.css'
-
-const Tab = styled(MuiTab)(({ theme }) => ({
-  [theme.breakpoints.down('md')]: {
-    minWidth: 100
-  },
-  [theme.breakpoints.down('sm')]: {
-    minWidth: 67
-  }
-}))
-
-const TabName = styled('span')(({ theme }) => ({
-  lineHeight: 1.71,
-  fontSize: '0.875rem',
-  marginLeft: theme.spacing(2.4),
-  [theme.breakpoints.down('md')]: {
-    display: 'none'
-  }
-}))
-
+import { Box, Button, ListItem, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Typography } from '@mui/material'
+import Link from 'next/link';
+import { fetchCategories,removeCategory } from 'features/category/categorySlice';
+import React, { useEffect,  useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchProducts } from 'features/product/productSlice';
 const index = () => {
-  // ** State
-  const [value, setValue] = useState('account')
+  const dispatch = useDispatch()
+  const {categories}= useSelector((state) => state.category)
+  const {products} = useSelector((state) => state.product)
+    const headerStyle = {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '16px',
+        backgroundColor: '#f0f0f0',
+    };
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue)
-  }
+    const categoryTextStyle = {
+        marginLeft: '8px',
+    };
 
-  return (
-    <Card>
-      <TabContext value={value}>
-        <TabList
-          onChange={handleChange}
-          aria-label='account-settings tabs'
-          sx={{ borderBottom: theme => `1px solid ${theme.palette.divider}` }}
-        >
-          <Tab
-            value='account'
-            label={
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <AccountOutline />
-                <TabName>Product Basic Details</TabName>
-              </Box>
-            }
-          />
-          <Tab
-            value='security'
-            label={
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <LockOpenOutline />
-                <TabName>Product Variations</TabName>
-              </Box>
-            }
-          />
-          <Tab
-            value='info'
-            label={
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <InformationOutline />
-                <TabName>Info</TabName>
-              </Box>
-            }
-          />
-        </TabList>
+    const [page, setPage] = useState(0)
+    const [rowsPerPage, setRowsPerPage] = useState(10)
+  
+    const handleChangePage = (event, newPage) => {
+      setPage(newPage)
+    }
+  
+    const handleChangeRowsPerPage = event => {
+      setRowsPerPage(+event.target.value)
+      setPage(0)
+    }
 
-        <TabPanel sx={{ p: 0 }} value='account'>
-          <ProductBasicInfo/>
-        </TabPanel>
-        <TabPanel sx={{ p: 0 }} value='security'>
-          <TabAccount />
-        </TabPanel>
-        <TabPanel sx={{ p: 0 }} value='info'>
-          <TabInfo />
-        </TabPanel>
-      </TabContext>
-    </Card>
-  )
+    useEffect(() => {
+      if(products.length===0)
+      dispatch(fetchProducts())
+    }, [dispatch])
+
+    const handleDelete = (id) => {
+      console.log(id)
+      dispatch(removeCategory(id))
+    }
+
+
+    return (
+        <div>
+            {/* SHOW Category text and add a Add button and the end of the screen */}
+            <div style={headerStyle}>
+                <Typography variant="h6" style={categoryTextStyle}>
+                    Products
+                </Typography>
+                <Link href="/products/create">
+                    <Button variant="contained" color="primary">
+                        Add Product
+                    </Button>
+                </Link>
+            </div>
+            <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+      <TableContainer sx={{ maxHeight: 440 }}>
+        <Table stickyHeader aria-label='sticky table'>
+          <TableHead>
+            <TableRow>
+            <TableCell sx={{ minWidth: 100 }}>
+                    Image
+                  
+                </TableCell>
+                <TableCell sx={{ minWidth: 100 }}>
+                    Name
+                  
+                </TableCell>
+                
+                <TableCell sx={{ minWidth: 100 }}>
+                    New Price
+                </TableCell>
+                <TableCell sx={{ minWidth: 100 }}>
+                    Old Price
+                </TableCell>
+                <TableCell sx={{ minWidth: 100 }}>
+                    Status
+                </TableCell>
+                <TableCell sx={{ minWidth: 100 }}>
+                    Actions
+                </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            
+                {
+                  products.map((product) => (
+                    <TableRow key={product.id}>
+                      <TableCell>
+                        <img src={process.env.API_URL+product.image} alt={product.name} style={{ width: '50px' }} />
+                      </TableCell>
+                      <TableCell>
+                        {product.name}
+                      </TableCell>
+                      
+                      <TableCell>
+                        {product?.new_price}
+                      </TableCell>
+                      <TableCell>
+                        {product?.old_price}
+                      </TableCell>
+                      <TableCell>
+                        {product?.status}
+                      </TableCell>
+                      <TableCell>
+                        <Stack direction="row" spacing={2}>
+                          <Link href={`/products/edit/${product.id}`}>
+                            <Button variant="contained" color="primary">
+                              Edit
+                            </Button>
+                          </Link>
+                          <Button onClick={()=>{
+                            handleDelete(product.id)
+                            
+                          }} variant="contained" color="error">
+                            Delete
+                          </Button>
+                        </Stack>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                }
+              
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <TablePagination
+        rowsPerPageOptions={[10, 25, 100]}
+        component='div'
+        count={5}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
+    </Paper>
+
+        </div>
+    )
 }
 
 export default index

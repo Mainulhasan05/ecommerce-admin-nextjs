@@ -24,11 +24,12 @@ import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
 import { fetchCategories,addCategory } from 'features/category/categorySlice'
 import { styled } from '@mui/material/styles';
 import Chip from '@mui/material/Chip';
-import { MenuItem, Select } from '@mui/material'
+import { Checkbox, MenuItem, Select } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 import { CloudUploadOutline } from 'mdi-material-ui'
 import axiosInstance from 'utils/axiosInstance'
 import toast from 'react-hot-toast'
+import { useRouter } from 'next/router'
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -53,6 +54,7 @@ function getStyles(name, personName, theme) {
 const index = () => {
   const dispatch = useDispatch();
   const { categories } = useSelector((state) => state.category);
+  const router=useRouter()
   useEffect(() => {
     if (categories.length === 0)
       dispatch(fetchCategories())
@@ -66,7 +68,8 @@ const index = () => {
     description:"",
     parentId:null,
     sortValue:0,
-    image:""
+    image:"",
+    isFeatured:false
   })
 
   const handleChange = (e) => {
@@ -76,20 +79,20 @@ const index = () => {
   }
 
   const handleSubmit = async (e) => {
-    
     e.preventDefault()
-    
     const formData = new FormData()
     formData.append('name', categoryObj.name)
     formData.append('description', categoryObj.description)
     formData.append('parentId', categoryObj.parentId)
     formData.append('sortValue', categoryObj.sortValue)
+    formData.append('isFeatured', categoryObj.isFeatured=="on"?true:false)
     formData.append('image', file)
     try {
-      // dispatch(addCategory(categoryObj))
+      
       const response=await dispatch(addCategory(formData))
       if(response.payload.success){
         toast.success(response?.payload?.message)
+        router.push('/category')
       }
       else{
         toast.error(response?.payload?.message)
@@ -157,7 +160,8 @@ const index = () => {
       <CardHeader title='Create Category' titleTypographyProps={{ variant: 'h6' }} />
       <CardContent>
         <form onSubmit={e => e.preventDefault()}>
-          <Grid container spacing={5}>
+          <Grid spacing={5}>
+          
             <Grid item xs={12}>
               <TextField name='name' onChange={handleChange} fullWidth label='Category Name' placeholder='Leonard Carter' />
             </Grid>
@@ -175,7 +179,7 @@ const index = () => {
             <div>
         {/* Optional: Show selected image preview */}
         {file && (
-          <img src={URL.createObjectURL(file)} alt="Selected file" style={{ maxWidth: '100%' }} />
+          <img src={URL.createObjectURL(file)} alt="Selected file" style={{ maxWidth: '50%' }} />
         )}
       </div>
             </Grid>
@@ -219,6 +223,21 @@ const index = () => {
                 </Select> */}
               </Grid>
             </Grid>
+            <br />
+            <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              value={categoryObj.sortValue}
+              name='sortValue'
+              type='number'
+              onChange={handleChange}
+              label='Sort Value'
+              placeholder='0'
+            />
+            <Grid item xs={12}>
+            <Checkbox name='isFeatured' onChange={handleChange} />
+            Is Featured
+            </Grid>
             <Grid item xs={12}>
               <FormControl fullWidth>
 
@@ -231,13 +250,6 @@ const index = () => {
                   label='Description (Optional)'
                   placeholder='Description...'
                   sx={{ '& .MuiOutlinedInput-root': { alignItems: 'baseline' } }}
-                // InputProps={{
-                //   startAdornment: (
-                //     <InputAdornment position='start'>
-                //       <MessageOutline />
-                //     </InputAdornment>
-                //   )
-                // }}
                 />
               </FormControl>
             </Grid>
@@ -255,14 +267,10 @@ const index = () => {
                 <Button onClick={handleSubmit} type='submit' variant='contained' size='large'>
                   Create
                 </Button>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <Typography sx={{ mr: 2 }}>Already have an account?</Typography>
-                  <Link href='/' onClick={e => e.preventDefault()}>
-                    Log in
-                  </Link>
-                </Box>
+                
               </Box>
             </Grid>
+          </Grid>
           </Grid>
         </form>
       </CardContent>

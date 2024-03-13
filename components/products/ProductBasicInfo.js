@@ -21,6 +21,10 @@ import { addProduct } from 'features/product/productSlice'
 import Close from 'mdi-material-ui/Close'
 import toast from 'react-hot-toast'
 import { useDispatch, useSelector } from 'react-redux'
+import { fetchCategories } from 'features/category/categorySlice'
+import { OutlinedInput } from '@mui/material'
+import { useTheme } from '@emotion/react'
+import Multiselect from 'multiselect-react-dropdown';
 
 const ImgStyled = styled('img')(({ theme }) => ({
   width: 120,
@@ -46,16 +50,23 @@ const ResetButtonStyled = styled(Button)(({ theme }) => ({
   }
 }))
 
+
 const ProductBasicInfo = () => {
-  const dispatch=useDispatch()
-    
+  const dispatch = useDispatch()
+  const { categories } = useSelector((state) => state.category)
+  useEffect(() => {
+    if (categories.length === 0)
+      dispatch(fetchCategories())
+  }, [dispatch])
+
   const [productObj, setProductObj] = useState({
     name: '',
-    description:'',
+    description: '',
     quantity: 10,
     status: 'inactive',
     old_price: 80,
     new_price: 60,
+    categoryIds: [],
   })
   const [openAlert, setOpenAlert] = useState(true)
   const [files, setFiles] = useState([])
@@ -63,7 +74,7 @@ const ProductBasicInfo = () => {
 
   const handleDescriptionChange = (content, editor) => {
     setProductObj({ ...productObj, description: content })
-    }
+  }
 
   const onChange = (event) => {
     // Handle file selection here
@@ -72,7 +83,7 @@ const ProductBasicInfo = () => {
     const filteredFiles = files.filter((file) => file.type.includes('image') && file.size < 800000);
     // if length of filteredFiles and files are not the same, then some files are not images or are too large, show a toast
     if (filteredFiles.length !== files.length) {
-        toast.error('Only images are allowed, and the size of the image should be less than 800K');
+      toast.error('Only images are allowed, and the size of the image should be less than 800K');
     }
     if (filteredFiles.length > 5) {
       toast.error('You can only upload 5 images at a time');
@@ -81,10 +92,10 @@ const ProductBasicInfo = () => {
 
     setFiles(filteredFiles);
   };
-  
 
-  const handleChange= (e) => {
-    setProductObj({...productObj,[e.target.name]:e.target.value})
+
+  const handleChange = (e) => {
+    setProductObj({ ...productObj, [e.target.name]: e.target.value })
   }
 
   const handleSubmit = async (e) => {
@@ -98,17 +109,24 @@ const ProductBasicInfo = () => {
       files.forEach((file) => {
         formData.append('images', file);
       });
-      dispatch(addProduct(formData))
+      const response=await dispatch(addProduct(formData))
+      
+      if(response.payload.success){
+        toast.success(response?.payload?.message)
+      }
+      else{
+        toast.error(response?.payload?.message)
+      }
     } catch (error) {
       console.log(error)
     }
   }
-
+  const theme = useTheme();
   const handleUpdate = async (e) => {
     e.preventDefault()
-    
+
     try {
-      
+
       const formData = new FormData()
       for (const key in productObj) {
         formData.append(key, productObj[key])
@@ -117,34 +135,34 @@ const ProductBasicInfo = () => {
       formData.set('image', imageFile);
       if (imageFile) {
         formData.set('image', imageFile);
-    } else {
-        
-    }
+      } else {
+
+      }
       // /seller/shop, put request
-      const response = await axiosInstance.put('/seller/shop/'+productObj?.id, formData)
+      const response = await axiosInstance.put('/seller/shop/' + productObj?.id, formData)
       console.log(response)
-      if(response.status===200){
+      if (response.status === 200) {
         toast.success('Shop Updated Successfully')
       }
     } catch (error) {
       console.log(error)
     }
   }
-  
+
 
   return (
     <CardContent>
       <form>
         <Grid container spacing={7}>
           <Grid item xs={12} sx={{ marginTop: 4.8, marginBottom: 3 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center',flexWrap:'wrap' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
               {
-                files.length > 0 ? 
-                files.map((file, index) => (
+                files.length > 0 ?
+                  files.map((file, index) => (
                     <ImgStyled key={index} src={URL.createObjectURL(file)} alt='user-avatar' />
-                    ))
-                :
-                <ImgStyled src={imgSrc} alt='user-avatar' />
+                  ))
+                  :
+                  <ImgStyled src={imgSrc} alt='user-avatar' />
               }
               <Box>
                 <ButtonStyled component='label' variant='contained' htmlFor='account-settings-upload-image'>
@@ -173,7 +191,7 @@ const ProductBasicInfo = () => {
             <TextField value={productObj.name} name="name" onChange={handleChange} fullWidth label='Product Name' placeholder='Cotton Panjabi for men' defaultValue='' />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField value={productObj.quantity} name='quantity' onChange={handleChange} fullWidth label='Product Quantity' placeholder='10'  />
+            <TextField value={productObj.quantity} name='quantity' onChange={handleChange} fullWidth label='Product Quantity' placeholder='10' />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
@@ -198,26 +216,36 @@ const ProductBasicInfo = () => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-          <FormControl fullWidth>
+            <FormControl fullWidth>
               <InputLabel>Status</InputLabel>
               <Select
-              name='status'
+                name='status'
                 onChange={handleChange}
-              value={productObj.status}
+                value={productObj.status}
                 label='Status' >
                 <MenuItem value='active'>Active</MenuItem>
                 <MenuItem value='inactive'>Inactive</MenuItem>
               </Select>
             </FormControl>
-            <FormControl fullWidth>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+          <FormControl fullWidth>
               <InputLabel>Status</InputLabel>
               <Select
-              name='status'
-                onChange={handleChange}
-              value={productObj.status}
-                label='Status' >
-                <MenuItem value='active'>Active</MenuItem>
-                <MenuItem value='inactive'>Inactive</MenuItem>
+                name='categoryIds'
+                onChange={(event)=>{
+                  console.log(event.target.value)
+                  setProductObj({...productObj, categoryIds: [event.target.value]})
+                  
+                }}
+                value={productObj.categoryIds}
+                label='Select Category' >
+                {
+                  categories.map((category) => (
+                    <MenuItem key={category.id} value={category.id}>{category.name}</MenuItem>
+                  ))
+                }
+                
               </Select>
             </FormControl>
           </Grid>
@@ -236,15 +264,15 @@ const ProductBasicInfo = () => {
           </Grid>
 
 
-          
+
           <Grid item xs={12}>
-            <Button onClick={(e)=>{
-              if(productObj.id){
-                
+            <Button onClick={(e) => {
+              if (productObj.id) {
+
                 handleUpdate(e)
               }
-              else{
-                
+              else {
+
                 handleSubmit(e)
               }
             }} variant='contained' sx={{ marginRight: 3.5 }}>
