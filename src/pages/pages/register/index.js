@@ -96,7 +96,7 @@ const RegisterPage = () => {
       const response = await axiosInstance.post('/seller/register', userObj)
     if(response.status === 201){
       toast.success(response.data.message)
-      Cookies.set('token', response.data.token)
+      Cookies.set('token', response.data?.data?.token)
       router.push('/')
     }
     else{

@@ -61,7 +61,14 @@ const FormControlLabel = styled(MuiFormControlLabel)(({ theme }) => ({
 
 export const getServerSideProps = async (context) => {
   const token = context.req.cookies.token
-  // if token is present, redirect to the / 
+  if(token===undefined) {
+    context.res.setHeader('Set-Cookie', `token=; expires=Thu, 01 Jan 1970 00:00:00 GMT`);
+  
+  
+    return {
+      props: {  },
+    }
+  }
   if (token) {
     return {
       redirect: {
