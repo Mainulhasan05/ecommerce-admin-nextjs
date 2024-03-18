@@ -16,14 +16,25 @@ import NotificationDropdown from 'src/@core/layouts/components/shared-components
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
 import { fetchUser } from 'features/user/userSlice'
+import toast from 'react-hot-toast'
+import { useRouter } from 'next/router'
 
 const AppBarContent = props => {
   const dispatch = useDispatch()
+  const router=useRouter()
   const {user}=useSelector(state=>state.user)
   useEffect(() => {
-    dispatch(fetchUser())
+    if(!user){
+      dispatch(fetchUser())
+    }
+    if(user){
+      if(user.hasShop==false){
+        toast.error('You do not have a shop yet. Please create a shop to continue')
+        router.push('/account-settings')
+      }
+    }
   }
-  , [])
+  , [user])
 
   // ** Props
   const { hidden, settings, saveSettings, toggleNavVisibility } = props
