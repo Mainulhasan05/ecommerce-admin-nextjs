@@ -115,7 +115,10 @@ const ProductBasicInfo = () => {
         toast.success(response?.payload?.message)
       }
       else{
-        toast.error(response?.payload?.message)
+        if(!response?.payload?.message.includes('404')){
+          toast.error(response?.payload?.message)
+        }
+        
       }
     } catch (error) {
       console.log(error)
