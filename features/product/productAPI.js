@@ -1,4 +1,6 @@
+import toast from 'react-hot-toast';
 import axiosInstance from '../../utils/axiosInstance';
+import { useRouter } from 'next/router';
 
 export const getProducts = async () => {
     try {
@@ -14,7 +16,13 @@ export const createProduct = async (data) => {
         const response = await axiosInstance.post('/seller/product', data);
         return response.data;
     } catch (error) {
-        throw error;
+        // throw error;
+        if(error?.response?.status===400){
+            toast.error(error?.response?.data?.message)
+            useRouter.push('/account-settings')
+        }
+        
+        return error;
     }
     }
 

@@ -110,7 +110,7 @@ const ProductBasicInfo = () => {
         formData.append('images', file);
       });
       const response=await dispatch(addProduct(formData))
-      
+      console.log(response)
       if(response.payload.success){
         toast.success(response?.payload?.message)
       }
@@ -119,6 +119,7 @@ const ProductBasicInfo = () => {
       }
     } catch (error) {
       console.log(error)
+      // toast.error(error.response.data.message)
     }
   }
   const theme = useTheme();

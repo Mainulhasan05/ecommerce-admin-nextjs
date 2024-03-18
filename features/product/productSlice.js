@@ -78,6 +78,11 @@ export const productSlice = createSlice({
         .addCase(addProduct.pending, (state) => {
             state.loading = true;
         })
+        .addCase(addProduct.rejected, (state, action) => {
+            
+            state.loading = false;
+            state.error = action.error.message;
+        })
         .addCase(addProduct.fulfilled, (state, action) => {
             state.loading = false;
             state.products.push(action.payload?.data);
