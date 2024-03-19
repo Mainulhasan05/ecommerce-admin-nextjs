@@ -2,6 +2,8 @@
 import { useEffect, useState } from 'react'
 import axiosInstance from 'utils/axiosInstance'
 import { useRef } from 'react'
+
+
 // ** MUI Imports
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
@@ -261,32 +263,10 @@ const ProductBasicInfo = () => {
             <Typography variant='h6' sx={{ marginBottom: 2.5 }}>
               Product Description
             </Typography>
-            <Editor
-      
-      tinymceScriptSrc={'./tinymce/tinymce.min.js'}
-      onChange={(e) => {
-        onChange(editorRef.current.getContent())
-        }}
-        onInit={(evt, editor) => editorRef.current = editor}
-        initialValue={productObj.description}
-        
-        init={{
-          height: 500,
-          menubar: true,
-          toolbar:true,
-          selector: "#editor",
-          plugins: [
-            "a11ychecker"
-          ],
-          toolbar: 'undo redo | blocks | bold italic | alignleft aligncenter alignright alignjustify | indent outdent | wordcount',
-          content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
-        }}
-      />
-      {/* style={{visibility:"visible"}} initialValue={productObj.description} onChange={handleDescriptionChange}  */}
-            <TextEditor initialValue={productObj.description} onChange={handleDescriptionChange} />
             
+      {/* <Editor apiKey={process.env.TINY_MCE_API}/> */}
+            <TextEditor initialValue={productObj.description} onChange={handleDescriptionChange} />
           </Grid>
-
 
 
 
