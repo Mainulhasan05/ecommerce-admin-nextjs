@@ -114,23 +114,24 @@ const LoginPage = ({login_form,dictionary}) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log(dictionary)
     setLoading(true)
-    return
     try {
       const response = await axiosInstance.post('/seller/login', userObj)
+      
       Cookies.set('token', response.data.data.token, {
-        expires:"30d"
+        expires: 30
       })
       toast.success(response.data.message)
       router.push('/')
     }
     catch (error) {
+      setLoading(false)
       console.log(error)
       if(error.response) {
         toast.error(error.response.data.message)
       }
     }
+    setLoading(false)
   }
 
 
@@ -250,15 +251,14 @@ const LoginPage = ({login_form,dictionary}) => {
                 <LinkStyled onClick={e => e.preventDefault()}>Forgot Password?</LinkStyled>
               </Link>
             </Box>
-            <Button
-              fullWidth
-              size='large'
-              variant='contained'
-              sx={{ marginBottom: 7 }}
-              onClick={handleSubmit}
-            >
-              Login
+            {
+              loading ? <Button variant='contained'  disabled={loading} fullWidth>
+              {dictionary?.login_form?.loading}
+            </Button> : <Button variant='contained' onClick={handleSubmit} disabled={loading} fullWidth>
+              {dictionary?.login_form?.login}
             </Button>
+            }
+            <br />
             <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
               <Typography variant='body2' sx={{ marginRight: 2 }}>
                 {dictionary?.login_form?.new_here}

@@ -5,6 +5,8 @@
         "phone":"Phone Number",
         "password":"Password",
         "new_here":"New on our platform?",
-        "create_account":"Create an account"
+        "create_account":"Create an account",
+        "loading":"Loading...",
+        "login":"Login"
     }
 }
