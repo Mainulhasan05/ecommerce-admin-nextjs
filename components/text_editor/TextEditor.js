@@ -1,32 +1,28 @@
-import React, { useRef } from 'react';
-import { Editor } from '@tinymce/tinymce-react';
+import React, { Component } from 'react';
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
-export default function App({initialValue,onChange}) {
-  const editorRef = useRef(null);
-  
+
+const TextEditor = ({initialValue,onChange}) => {
   return (
-    <>
-      <Editor
-      tinymceScriptSrc={'./tinymce/tinymce.min.js'}
-      onChange={(e) => {
-        onChange(editorRef.current.getContent())
-        }}
-        onInit={(evt, editor) => editorRef.current = editor}
-        initialValue={initialValue}
-        
-        init={{
-          height: 500,
-          menubar: true,
-          toolbar:true,
-          selector: "#editor",
-          plugins: [
-            "a11ychecker"
-          ],
-          toolbar: 'undo redo | blocks | bold italic | alignleft aligncenter alignright alignjustify | indent outdent | wordcount',
-          content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
-        }}
-      />
-      
-    </>
-  );
+    <div className="App">
+                <CKEditor
+                    editor={ ClassicEditor }
+                    data={initialValue}
+                    
+                    
+                    onChange={ ( event ) => {
+                      console.log(event.editor);
+                  } }
+                    onBlur={ ( event, editor ) => {
+                        console.log( 'Blur.', editor );
+                    } }
+                    onFocus={ ( event, editor ) => {
+                        console.log( 'Focus.', editor );
+                    } }
+                />
+            </div>
+  )
 }
+
+export default TextEditor

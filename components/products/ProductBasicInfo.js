@@ -1,6 +1,7 @@
 // ** React Imports
 import { useEffect, useState } from 'react'
 import axiosInstance from 'utils/axiosInstance'
+import { useRef } from 'react'
 // ** MUI Imports
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
@@ -25,6 +26,7 @@ import { fetchCategories } from 'features/category/categorySlice'
 import { OutlinedInput } from '@mui/material'
 import { useTheme } from '@emotion/react'
 import Multiselect from 'multiselect-react-dropdown';
+import { Editor } from '@tinymce/tinymce-react'
 
 const ImgStyled = styled('img')(({ theme }) => ({
   width: 120,
@@ -54,6 +56,7 @@ const ResetButtonStyled = styled(Button)(({ theme }) => ({
 const ProductBasicInfo = () => {
   const dispatch = useDispatch()
   const { categories } = useSelector((state) => state.category)
+  const editorRef = useRef(null);
   useEffect(() => {
     if (categories.length === 0)
       dispatch(fetchCategories())
@@ -63,7 +66,7 @@ const ProductBasicInfo = () => {
     name: '',
     description: '',
     quantity: 10,
-    status: 'inactive',
+    status: 'active',
     old_price: 80,
     new_price: 60,
     categoryIds: [],
@@ -234,7 +237,7 @@ const ProductBasicInfo = () => {
           </Grid>
           <Grid item xs={12} sm={6}>
           <FormControl fullWidth>
-              <InputLabel>Status</InputLabel>
+              <InputLabel>Product Category</InputLabel>
               <Select
                 name='categoryIds'
                 onChange={(event)=>{
@@ -255,17 +258,35 @@ const ProductBasicInfo = () => {
           </Grid>
 
           <Grid item xs={12} sm={12}>
+            <Typography variant='h6' sx={{ marginBottom: 2.5 }}>
+              Product Description
+            </Typography>
+            <Editor
+      
+      tinymceScriptSrc={'./tinymce/tinymce.min.js'}
+      onChange={(e) => {
+        onChange(editorRef.current.getContent())
+        }}
+        onInit={(evt, editor) => editorRef.current = editor}
+        initialValue={productObj.description}
+        
+        init={{
+          height: 500,
+          menubar: true,
+          toolbar:true,
+          selector: "#editor",
+          plugins: [
+            "a11ychecker"
+          ],
+          toolbar: 'undo redo | blocks | bold italic | alignleft aligncenter alignright alignjustify | indent outdent | wordcount',
+          content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+        }}
+      />
+      {/* style={{visibility:"visible"}} initialValue={productObj.description} onChange={handleDescriptionChange}  */}
             <TextEditor initialValue={productObj.description} onChange={handleDescriptionChange} />
-            {/* <TextField
-              fullWidth
-              value={productObj.deliveryChargeOutsideChapai}
-              name='deliveryChargeOutsideChapai'
-              type='text'
-              onChange={handleChange}
-              label='Old Price'
-              placeholder='80'
-            /> */}
+            
           </Grid>
+
 
 
 
