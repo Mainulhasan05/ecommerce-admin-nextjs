@@ -64,8 +64,10 @@ const index = () => {
           <TableHead>
             <TableRow>
             <TableCell sx={{ minWidth: 100 }}>
+                    Id
+                </TableCell>
+            <TableCell sx={{ minWidth: 100 }}>
                     Image
-                  
                 </TableCell>
                 <TableCell sx={{ minWidth: 100 }}>
                     Name
@@ -76,7 +78,7 @@ const index = () => {
                     New Price
                 </TableCell>
                 <TableCell sx={{ minWidth: 100 }}>
-                    Old Price
+                    Views
                 </TableCell>
                 <TableCell sx={{ minWidth: 100 }}>
                     Status
@@ -92,6 +94,9 @@ const index = () => {
                   products.map((product) => (
                     <TableRow key={product.id}>
                       <TableCell>
+                        {product.id}
+                      </TableCell>
+                      <TableCell>
                         <img src={process.env.API_URL+product.image} alt={product.name} style={{ width: '50px' }} />
                       </TableCell>
                       <TableCell>
@@ -102,7 +107,7 @@ const index = () => {
                         {product?.new_price}
                       </TableCell>
                       <TableCell>
-                        {product?.old_price}
+                        {product?.views}
                       </TableCell>
                       <TableCell>
                         {product?.status}

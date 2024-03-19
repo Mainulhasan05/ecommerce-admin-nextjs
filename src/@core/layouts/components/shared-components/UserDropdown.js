@@ -3,7 +3,7 @@ import { useState, Fragment } from 'react'
 
 // ** Next Import
 import { useRouter } from 'next/router'
-
+import Cookies from 'js-cookie'
 // ** MUI Imports
 import Box from '@mui/material/Box'
 import Menu from '@mui/material/Menu'
@@ -47,6 +47,7 @@ const UserDropdown = () => {
 
   const handleDropdownClose = url => {
     if (url) {
+      Cookies.remove('token')
       router.push(url)
     }
     setAnchorEl(null)
