@@ -1,0 +1,10 @@
+{
+    "login_form":{
+        "welcome": "Welcome to Suchonamart! 👋🏻",
+        "info": "Please sign-in to your account and start the adventure",
+        "phone":"Phone Number",
+        "password":"Password",
+        "new_here":"New on our platform?",
+        "create_account":"Create an account"
+    }
+}

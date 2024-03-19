@@ -23,6 +23,7 @@ import MuiCard from '@mui/material/Card'
 import InputAdornment from '@mui/material/InputAdornment'
 import MuiFormControlLabel from '@mui/material/FormControlLabel'
 
+import {getDictionary} from '../../../../utils/getDictionary'
 // ** Icons Imports
 import Google from 'mdi-material-ui/Google'
 import Github from 'mdi-material-ui/Github'
@@ -61,12 +62,15 @@ const FormControlLabel = styled(MuiFormControlLabel)(({ theme }) => ({
 
 export const getServerSideProps = async (context) => {
   const token = context.req.cookies.token
+  const dictionary =await getDictionary(process.env.DEFAULT_LANGUAGE)
+  
+  
   if(token===undefined) {
     context.res.setHeader('Set-Cookie', `token=; expires=Thu, 01 Jan 1970 00:00:00 GMT`);
   
   
     return {
-      props: {  },
+      props: { dictionary },
     }
   }
   if (token) {
@@ -78,17 +82,18 @@ export const getServerSideProps = async (context) => {
     }
   }
   return {
-    props: {  },
+    props: { dictionary },
   }
 }
 
 
-const LoginPage = () => {
+const LoginPage = ({login_form,dictionary}) => {
   // ** State
   const [userObj, setUserObj] = useState({
     phone: '',
     password: ''
   })
+  const [loading, setLoading] = useState(false)
   const [values, setValues] = useState({
     password: '',
     showPassword: false
@@ -109,10 +114,14 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    console.log(dictionary)
+    setLoading(true)
+    return
     try {
       const response = await axiosInstance.post('/seller/login', userObj)
-      console.log(response.data)
-      Cookies.set('token', response.data.data.token)
+      Cookies.set('token', response.data.data.token, {
+        expires:"30d"
+      })
       toast.success(response.data.message)
       router.push('/')
     }
@@ -205,14 +214,14 @@ const LoginPage = () => {
           </Box>
           <Box sx={{ mb: 6 }}>
             <Typography variant='h5' sx={{ fontWeight: 600, marginBottom: 1.5 }}>
-              Welcome to {themeConfig.templateName}! 👋🏻
+            {dictionary?.login_form?.welcome} {themeConfig.templateName}!
             </Typography>
-            <Typography variant='body2'>Please sign-in to your account and start the adventure</Typography>
+            <Typography variant='body2'>{dictionary?.login_form?.info}</Typography>
           </Box>
           <form noValidate autoComplete='off' onSubmit={e => e.preventDefault()}>
-            <TextField onChange={handleChange} autoFocus fullWidth id='phone' label='Phone Number' sx={{ marginBottom: 4 }} />
+            <TextField onChange={handleChange} placeholder='017xxxxxx' autoFocus fullWidth id='phone' label={dictionary?.login_form?.phone} sx={{ marginBottom: 4 }} />
             <FormControl fullWidth>
-              <InputLabel htmlFor='auth-login-password'>Password</InputLabel>
+              <InputLabel htmlFor='auth-login-password'>{dictionary?.login_form?.password}</InputLabel>
               <OutlinedInput
                 label='Password'
                 
@@ -252,11 +261,11 @@ const LoginPage = () => {
             </Button>
             <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
               <Typography variant='body2' sx={{ marginRight: 2 }}>
-                New on our platform?
+                {dictionary?.login_form?.new_here}
               </Typography>
               <Typography variant='body2'>
                 <Link passHref href='/pages/register'>
-                  <LinkStyled>Create an account</LinkStyled>
+                  <LinkStyled>{dictionary?.login_form?.create_account}</LinkStyled>
                 </Link>
               </Typography>
             </Box>
