@@ -8,7 +8,7 @@ export default function App({initialValue,onChange}) {
     <>
       <Editor
       apiKey={process.env.TINY_MCE_API}
-      tinymceScriptSrc={'./tinymce/tinymce.min.js'}
+      
       onChange={(e) => {
         onChange(editorRef.current.getContent())
         }}
