@@ -1,5 +1,6 @@
 import Grid from '@mui/material/Grid'
 import axiosInstance from 'utils/axiosInstance'
+import { fetchDashboard } from 'features/dashboard/dashboardSlice'
 // ** Icons Imports
 import Poll from 'mdi-material-ui/Poll'
 import CurrencyUsd from 'mdi-material-ui/CurrencyUsd'
@@ -20,6 +21,7 @@ import StatisticsCard from 'src/views/dashboard/StatisticsCard'
 import WeeklyOverview from 'src/views/dashboard/WeeklyOverview'
 import DepositWithdraw from 'src/views/dashboard/DepositWithdraw'
 import SalesByCountries from 'src/views/dashboard/SalesByCountries'
+import { useDispatch } from 'react-redux'
 
 export const getServerSideProps = async (context) => {
   // get the token from the request
@@ -40,6 +42,8 @@ export const getServerSideProps = async (context) => {
 }
 
 const Dashboard = () => {
+  const dispatch=useDispatch()
+  dispatch(fetchDashboard())
   return (
     <ApexChartWrapper>
       <Grid container spacing={6}>
