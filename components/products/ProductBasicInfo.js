@@ -21,7 +21,7 @@ import FormControl from '@mui/material/FormControl'
 import Button from '@mui/material/Button'
 import { addProduct } from 'features/product/productSlice'
 // ** Icons Imports
-import Close from 'mdi-material-ui/Close'
+import Chip from '@mui/material/Chip';
 import toast from 'react-hot-toast'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchCategories } from 'features/category/categorySlice'
@@ -54,6 +54,24 @@ const ResetButtonStyled = styled(Button)(({ theme }) => ({
   }
 }))
 
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+function getStyles(name, personName, theme) {
+  return {
+    fontWeight:
+      personName.indexOf(name) === -1
+        ? theme.typography.fontWeightRegular
+        : theme.typography.fontWeightMedium,
+  };
+}
 
 const ProductBasicInfo = () => {
   const dispatch = useDispatch()
@@ -75,7 +93,7 @@ const ProductBasicInfo = () => {
   })
   const [openAlert, setOpenAlert] = useState(true)
   const [files, setFiles] = useState([])
-  const [imgSrc, setImgSrc] = useState('/images/shop_logo.png')
+  const [imgSrc, setImgSrc] = useState('/images/placeholder.jpg')
 
   const handleDescriptionChange = (content, editor) => {
     setProductObj({ ...productObj, description: content })
@@ -131,33 +149,25 @@ const ProductBasicInfo = () => {
     }
   }
   const theme = useTheme();
-  const handleUpdate = async (e) => {
-    e.preventDefault()
+  const [personName, setPersonName] = useState([]);
 
-    try {
-
-      const formData = new FormData()
-      for (const key in productObj) {
-        formData.append(key, productObj[key])
-      }
-      const imageFile = document.querySelector('input[type="file"]').files[0];
-      formData.set('image', imageFile);
-      if (imageFile) {
-        formData.set('image', imageFile);
-      } else {
-
-      }
-      // /seller/shop, put request
-      const response = await axiosInstance.put('/seller/shop/' + productObj?.id, formData)
-      console.log(response)
-      if (response.status === 200) {
-        toast.success('Shop Updated Successfully')
-      }
-    } catch (error) {
-      console.log(error)
+  const handleChange2 = (event) => {
+    if(event.target.value.length>3){
+      toast.error('You can only select 3 categories at a time')
+      return
     }
-  }
+    const {
+      target: { value },
+    } = event;
+    setPersonName(
+      typeof value === 'string' ? value.split(',') : value,
+    );
+    setProductObj({...productObj, categoryIds: value.map((val)=>val.id)})
+    
+  };
 
+  
+  
 
   return (
     <CardContent>
@@ -241,23 +251,37 @@ const ProductBasicInfo = () => {
           <FormControl fullWidth>
               <InputLabel>Product Category</InputLabel>
               <Select
-                name='categoryIds'
-                onChange={(event)=>{
-                  console.log(event.target.value)
-                  setProductObj({...productObj, categoryIds: [event.target.value]})
+                  labelId="demo-multiple-chip-label"
+                  id="demo-multiple-chip"
+                  multiple
+                  placeholder='Select Category'
+                  label='Select Category'
                   
-                }}
-                value={productObj.categoryIds}
-                label='Select Category' >
-                {
-                  categories.map((category) => (
-                    <MenuItem key={category.id} value={category.id}>{category.name}</MenuItem>
-                  ))
-                }
-                
-              </Select>
+                  value={personName}
+                  onChange={handleChange2}
+                  input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+                  renderValue={(selected) => (
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                      {selected.map((value) => (
+                        <Chip key={value} label={value.name} />
+                      ))}
+                    </Box>
+                  )}
+                  MenuProps={MenuProps}
+                >
+                  {categories.map((cat) => (
+                    <MenuItem
+                      key={cat?.id}
+                      value={cat}
+                      style={getStyles(name, personName, theme)}
+                    >
+                      {cat?.name}
+                    </MenuItem>
+                  ))}
+                </Select>
             </FormControl>
           </Grid>
+          
 
           <Grid item xs={12} sm={12}>
             <Typography variant='h6' sx={{ marginBottom: 2.5 }}>
