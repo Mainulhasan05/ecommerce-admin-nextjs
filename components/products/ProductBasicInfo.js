@@ -129,6 +129,7 @@ const ProductBasicInfo = () => {
       for (const key in productObj) {
         formData.append(key, productObj[key])
       }
+      formData.set('categoryIds', JSON.stringify(productObj.categoryIds))
       files.forEach((file) => {
         formData.append('images', file);
       });
@@ -162,6 +163,7 @@ const ProductBasicInfo = () => {
     setPersonName(
       typeof value === 'string' ? value.split(',') : value,
     );
+
     setProductObj({...productObj, categoryIds: value.map((val)=>val.id)})
     
   };
