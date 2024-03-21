@@ -15,7 +15,7 @@ import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import InputLabel from '@mui/material/InputLabel'
-import TextEditor from '../text_editor/TextEditor';
+import TextEditor from '../../text_editor/TextEditor';
 import CardContent from '@mui/material/CardContent'
 import FormControl from '@mui/material/FormControl'
 import Button from '@mui/material/Button'
@@ -55,24 +55,39 @@ const ResetButtonStyled = styled(Button)(({ theme }) => ({
 }))
 
 
-const ProductBasicInfo = () => {
+const ProductBasicInfo = ({product}) => {
   const dispatch = useDispatch()
   const { categories } = useSelector((state) => state.category)
   const editorRef = useRef(null);
+  
   useEffect(() => {
     if (categories.length === 0)
       dispatch(fetchCategories())
   }, [dispatch])
-
   const [productObj, setProductObj] = useState({
     name: '',
     description: '',
     quantity: 10,
     status: 'active',
-    old_price: 80,
-    new_price: 60,
+    old_price: 0,
+    new_price: 0,
     categoryIds: [],
   })
+  useEffect(() => {
+    // setProductObj({...productObj, categoryIds: [event.target.value]})
+    setProductObj({
+      ...productObj,
+      name: product?.name,
+      description: product?.description,
+      quantity: product?.quantity,
+      status: product?.status,
+      old_price: product?.old_price,
+      new_price: product?.new_price,
+      categoryIds: product?.categories.map((category)=>category.id)
+    })
+  }, [product])
+
+  
   const [openAlert, setOpenAlert] = useState(true)
   const [files, setFiles] = useState([])
   const [imgSrc, setImgSrc] = useState('/images/shop_logo.png')
@@ -166,13 +181,14 @@ const ProductBasicInfo = () => {
           <Grid item xs={12} sx={{ marginTop: 4.8, marginBottom: 3 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
               {
-                files.length > 0 ?
-                  files.map((file, index) => (
-                    <ImgStyled key={index} src={URL.createObjectURL(file)} alt='user-avatar' />
+                productObj?.images?.length > 0 ?
+                  productObj?.images?.map((image, index) => (
+                    <ImgStyled key={index} src={process.env.API_URL+image.url} alt='user-avatar' />
                   ))
                   :
                   <ImgStyled src={imgSrc} alt='user-avatar' />
               }
+              
               <Box>
                 <ButtonStyled component='label' variant='contained' htmlFor='account-settings-upload-image'>
                   Upload Product Photos
@@ -216,7 +232,7 @@ const ProductBasicInfo = () => {
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              value={productObj.deliveryChargeOutsideChapai}
+              value={productObj.old_price}
               name='old_price'
               type='number'
               onChange={handleChange}

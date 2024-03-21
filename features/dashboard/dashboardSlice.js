@@ -30,7 +30,7 @@ export const dashboardSlice = createSlice({
             })
             .addCase(fetchDashboard.fulfilled, (state, action) => {
                 state.loading = false;
-                state.dashboard = action.payload;
+                state.dashboard = action.payload.data;
             })
             .addCase(fetchDashboard.rejected, (state, action) => {
                 state.loading = false;

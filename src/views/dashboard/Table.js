@@ -9,6 +9,7 @@ import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import Typography from '@mui/material/Typography'
 import TableContainer from '@mui/material/TableContainer'
+import { useSelector } from 'react-redux'
 
 const rows = [
   {
@@ -94,45 +95,32 @@ const statusObj = {
 }
 
 const DashboardTable = () => {
+  const {dashboard}=useSelector(state=>state.dashboard)
   return (
     <Card>
       <TableContainer>
         <Table sx={{ minWidth: 800 }} aria-label='table in dashboard'>
           <TableHead>
             <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Date</TableCell>
-              <TableCell>Salary</TableCell>
-              <TableCell>Age</TableCell>
-              <TableCell>Status</TableCell>
+              <TableCell>Done By</TableCell>
+              <TableCell>Activities</TableCell>
+              <TableCell>Created At</TableCell>
+              
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map(row => (
+            {dashboard?.activities?.map(row => (
               <TableRow hover key={row.name} sx={{ '&:last-of-type td, &:last-of-type th': { border: 0 } }}>
-                <TableCell sx={{ py: theme => `${theme.spacing(0.5)} !important` }}>
+                {/* <TableCell sx={{ py: theme => `${theme.spacing(0.5)} !important` }}>
                   <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                     <Typography sx={{ fontWeight: 500, fontSize: '0.875rem !important' }}>{row.name}</Typography>
                     <Typography variant='caption'>{row.designation}</Typography>
                   </Box>
-                </TableCell>
-                <TableCell>{row.email}</TableCell>
-                <TableCell>{row.date}</TableCell>
-                <TableCell>{row.salary}</TableCell>
-                <TableCell>{row.age}</TableCell>
-                <TableCell>
-                  <Chip
-                    label={row.status}
-                    color={statusObj[row.status].color}
-                    sx={{
-                      height: 24,
-                      fontSize: '0.75rem',
-                      textTransform: 'capitalize',
-                      '& .MuiChip-label': { fontWeight: 500 }
-                    }}
-                  />
-                </TableCell>
+                </TableCell> */}
+                <TableCell>{row?.Seller?.name}</TableCell>
+                <TableCell>{row?.action}</TableCell>
+                <TableCell>{new Date(row?.createdAt).toDateString()}, {new Date(row?.createdAt).toLocaleTimeString()}</TableCell>
+                
               </TableRow>
             ))}
           </TableBody>
