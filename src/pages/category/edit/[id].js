@@ -59,7 +59,8 @@ const index = () => {
     parentId:'',
     sortValue:0,
     image:"",
-    isFeatured:false
+    isFeatured:false,
+    sideMenu:false
   })
   useEffect(() => {
     if(router.query.id)
@@ -87,19 +88,22 @@ const index = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target
+    console.log(categoryObj)
     setcategoryObj({ ...categoryObj, [name]: value })
     
   }
 
   const handleSubmit = async (e) => {
+    
     e.preventDefault()
     const formData = new FormData()
     formData.append('id', categoryObj.id)
     formData.append('name', categoryObj.name)
     formData.append('description', categoryObj.description)
-    formData.append('parentId', categoryObj.parentId)
+    formData.append('parentId', categoryObj.parentId == null ? '' : categoryObj.parentId)
     formData.append('sortValue', categoryObj.sortValue)
-    formData.append('isFeatured', categoryObj.isFeatured=="on"?true:false)
+    formData.append('isFeatured', categoryObj.isFeatured)
+    formData.append('sideMenu', categoryObj.sideMenu)
     formData.append('image', file)
     try {
       
@@ -212,8 +216,19 @@ const index = () => {
               placeholder='0'
             />
             <Grid item xs={12}>
-            <Checkbox name='isFeatured' value={categoryObj.isFeatured} onChange={handleChange} />
+            <Checkbox checked={categoryObj?.isFeatured} name='isFeatured' value={categoryObj.isFeatured} onChange={(e)=>{
+              
+              setcategoryObj({...categoryObj,isFeatured:!categoryObj.isFeatured})
+            
+            }} />
             Is Featured
+            </Grid>
+            <Grid item xs={12}>
+            <Checkbox checked={categoryObj?.sideMenu} name='sideMenu' value={categoryObj.sideMenu} onChange={()=>{
+              setcategoryObj({...categoryObj,sideMenu:!categoryObj.sideMenu})
+              
+            }} />
+            Is SideMenu
             </Grid>
             <Grid item xs={12}>
               <FormControl fullWidth>

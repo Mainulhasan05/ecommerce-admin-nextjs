@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import axiosInstance from '../../utils/axiosInstance';
 
 export const getCategories = async () => {
@@ -23,6 +24,8 @@ export const updateCategory = async (data) => {
         const response = await axiosInstance.put('/seller/category/'+data?.get('id'), data);
         return response.data;
     } catch (error) {
+        console.log(error?.response?.data?.message)
+        toast.error(error?.response?.data?.message)
         throw error;
     }
     }

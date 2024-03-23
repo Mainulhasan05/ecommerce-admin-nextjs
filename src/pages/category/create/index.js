@@ -65,7 +65,8 @@ const index = () => {
     parentId:'',
     sortValue:0,
     image:"",
-    isFeatured:false
+    isFeatured:false,
+    sideMenu:false
   })
 
   const handleChange = (e) => {
@@ -82,6 +83,7 @@ const index = () => {
     formData.append('parentId', categoryObj.parentId)
     formData.append('sortValue', categoryObj.sortValue)
     formData.append('isFeatured', categoryObj.isFeatured=="on"?true:false)
+    formData.append('sideMenu', categoryObj.sideMenu=="on"?true:false)
     formData.append('image', file)
     try {
       
@@ -218,6 +220,10 @@ const index = () => {
             <Grid item xs={12}>
             <Checkbox name='isFeatured' onChange={handleChange} />
             Is Featured
+            </Grid>
+            <Grid item xs={12}>
+            <Checkbox name='sideMenu' onChange={handleChange} />
+            Is SideMenu
             </Grid>
             <Grid item xs={12}>
               <FormControl fullWidth>
