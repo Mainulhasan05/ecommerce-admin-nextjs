@@ -27,8 +27,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { fetchCategories } from 'features/category/categorySlice'
 import { OutlinedInput } from '@mui/material'
 import { useTheme } from '@emotion/react'
-import Multiselect from 'multiselect-react-dropdown';
-import { Editor } from '@tinymce/tinymce-react'
+import { fetchParentCategories,fetchChildCategories } from 'features/category/categorySlice'
 
 const ImgStyled = styled('img')(({ theme }) => ({
   width: 120,
@@ -75,11 +74,11 @@ function getStyles(name, personName, theme) {
 
 const ProductBasicInfo = () => {
   const dispatch = useDispatch()
-  const { categories } = useSelector((state) => state.category)
+  const { parentCategories,childCategories } = useSelector((state) => state.category)
   const editorRef = useRef(null);
   useEffect(() => {
-    if (categories.length === 0)
-      dispatch(fetchCategories())
+    if (parentCategories.length === 0)
+      dispatch(fetchParentCategories())
   }, [dispatch])
 
   const [productObj, setProductObj] = useState({
@@ -91,7 +90,8 @@ const ProductBasicInfo = () => {
     new_price: 60,
     categoryIds: [],
   })
-  const [openAlert, setOpenAlert] = useState(true)
+  const [parentCategoryId, setParentCategoryId] = useState('')
+  const [childCategoryId, setChildCategoryId] = useState('')
   const [files, setFiles] = useState([])
   const [imgSrc, setImgSrc] = useState('/images/placeholder.jpg')
 
@@ -100,11 +100,8 @@ const ProductBasicInfo = () => {
   }
 
   const onChange = (event) => {
-    // Handle file selection here
     const files = Array.from(event.target.files);
-    // only take maximum of 5 images, and check if the file is an image, and the size is less than 800K
     const filteredFiles = files.filter((file) => file.type.includes('image') && file.size < 800000);
-    // if length of filteredFiles and files are not the same, then some files are not images or are too large, show a toast
     if (filteredFiles.length !== files.length) {
       toast.error('Only images are allowed, and the size of the image should be less than 800K');
     }
@@ -119,20 +116,43 @@ const ProductBasicInfo = () => {
 
   const handleChange = (e) => {
     setProductObj({ ...productObj, [e.target.name]: e.target.value })
+    console.log(productObj)
   }
+  const handleCategoryChange = async(e) => {
+    setParentCategoryId(e.target.value)
+    setChildCategoryId('')
+    dispatch(fetchChildCategories(e.target.value))
+  }
+
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    // convert the inputs into form data, send all images and other data to the server
     try {
+
       const formData = new FormData()
       for (const key in productObj) {
         formData.append(key, productObj[key])
       }
-      formData.set('categoryIds', JSON.stringify(productObj.categoryIds))
+      
+      if (parentCategoryId === '' || childCategoryId === '') {
+        toast.error('Please select a category')
+        return
+      }
+      let categoryIds = []
+      if(parentCategoryId!=""){
+        categoryIds.push(parentCategoryId)
+      }
+      
+      if(childCategoryId!=""){
+        categoryIds.push(childCategoryId)
+      }
+      
+      
+      
       files.forEach((file) => {
         formData.append('images', file);
       });
+      formData.set('categoryIds', JSON.stringify(categoryIds))
       const response=await dispatch(addProduct(formData))
       console.log(response)
       if(response.payload.success){
@@ -212,7 +232,7 @@ const ProductBasicInfo = () => {
             <TextField value={productObj.name} name="name" onChange={handleChange} fullWidth label='Product Name' placeholder='Cotton Panjabi for men' defaultValue='' />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField value={productObj.quantity} name='quantity' onChange={handleChange} fullWidth label='Product Quantity' placeholder='10' />
+            <TextField type='number' value={productObj.quantity} name='quantity' onChange={handleChange} fullWidth label='Product Quantity' placeholder='10' />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
@@ -251,8 +271,8 @@ const ProductBasicInfo = () => {
           </Grid>
           <Grid item xs={12} sm={6}>
           <FormControl fullWidth>
-              <InputLabel>Product Category</InputLabel>
-              <Select
+              {/* <InputLabel>Product Category</InputLabel> */}
+              {/* <Select
                   labelId="demo-multiple-chip-label"
                   id="demo-multiple-chip"
                   multiple
@@ -280,7 +300,54 @@ const ProductBasicInfo = () => {
                       {cat?.name}
                     </MenuItem>
                   ))}
-                </Select>
+                </Select> */}
+            </FormControl>
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth>
+              <InputLabel>Product Type</InputLabel>
+              <Select
+              
+                onChange={handleCategoryChange}
+                value={parentCategoryId}
+                label='Product Type' >
+                  {
+                    parentCategories.map((cat) => (
+                      <MenuItem
+                        key={cat?.id}
+                        value={cat.id}
+                        style={getStyles(cat, personName, theme)}
+                      >
+                        {cat?.name}
+                      </MenuItem>
+                    ))
+
+                  }
+              </Select>
+            </FormControl>
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth>
+              <InputLabel>Categories</InputLabel>
+              <Select
+                
+                onChange={(e)=>setChildCategoryId(e.target.value)}
+                value={childCategoryId}
+                label='Categories' >
+                  {
+                    childCategories.map((cat) => (
+                      <MenuItem
+                        key={cat?.id}
+                        value={cat.id}
+                        style={getStyles(cat, personName, theme)}
+                      >
+                        {cat?.name}
+                      </MenuItem>
+                    ))
+                  }
+              </Select>
             </FormControl>
           </Grid>
           

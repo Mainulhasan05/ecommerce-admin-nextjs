@@ -14,20 +14,16 @@ import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
 import FormControl from '@mui/material/FormControl'
-import OutlinedInput from '@mui/material/OutlinedInput'
-import InputAdornment from '@mui/material/InputAdornment'
-import FormHelperText from '@mui/material/FormHelperText'
 import { useTheme } from '@mui/material/styles';
 // ** Icons Imports
 import EyeOutline from 'mdi-material-ui/EyeOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
-import { fetchCategories,addCategory } from 'features/category/categorySlice'
+import { addCategory, fetchParentCategories } from 'features/category/categorySlice'
 import { styled } from '@mui/material/styles';
 import Chip from '@mui/material/Chip';
 import { Checkbox, MenuItem, Select } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 import { CloudUploadOutline } from 'mdi-material-ui'
-import axiosInstance from 'utils/axiosInstance'
 import toast from 'react-hot-toast'
 import { useRouter } from 'next/router'
 
@@ -53,11 +49,11 @@ function getStyles(name, personName, theme) {
 }
 const index = () => {
   const dispatch = useDispatch();
-  const { categories } = useSelector((state) => state.category);
+  const { parentCategories } = useSelector((state) => state.category)
   const router=useRouter()
   useEffect(() => {
-    if (categories.length === 0)
-      dispatch(fetchCategories())
+    if (parentCategories.length === 0)
+      dispatch(fetchParentCategories())
   }, [dispatch])
   const theme = useTheme();
   const [personName, setPersonName] = useState([]);
@@ -66,7 +62,7 @@ const index = () => {
   const [categoryObj, setcategoryObj] = useState({
     name:"",
     description:"",
-    parentId:null,
+    parentId:'',
     sortValue:0,
     image:"",
     isFeatured:false
@@ -183,46 +179,31 @@ const index = () => {
         )}
       </div>
             </Grid>
-            <Grid item xs={12}>
-              <InputLabel id="demo-multiple-chip-label">Parent Category</InputLabel>
-              <Grid item xs={12}>
-                <select className='form-control' onChange={handleChange} name="parentId" id="">
-                  <option value="">Select Parent Category</option>
-                  {categories.map((cat) => (
-                    <option key={cat?.id} value={cat?.id}>
-                      {cat?.name}
-                    </option>
-                  ))}
-                </select>
-                {/* <Select
-                  labelId="demo-multiple-chip-label"
-                  id="demo-multiple-chip"
-                  multiple
-                  value={personName}
-                  onChange={handleChange2}
-                  input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
-                  renderValue={(selected) => (
+            <br />
+            <Grid item xs={12} sm={6}>
+            <FormControl fullWidth>
+              <InputLabel>Parent Category</InputLabel>
+              <Select
+                name='parentId'
+                onChange={handleChange}
+                value={categoryObj.parentId}
+                label='Product Type' >
+                  {
+                    parentCategories.map((cat) => (
+                      <MenuItem
+                        key={cat?.id}
+                        value={cat.id}
+                        style={getStyles(cat, personName, theme)}
+                      >
+                        {cat?.name}
+                      </MenuItem>
+                    ))
 
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                      {selected.map((value) => (
-                        <Chip key={value} label={value} />
-                      ))}
-                    </Box>
-                  )}
-                  MenuProps={MenuProps}
-                >
-                  {categories.map((cat) => (
-                    <MenuItem
-                      key={cat?.id}
-                      value={cat?.name}
-                      style={getStyles(name, personName, theme)}
-                    >
-                      {cat?.name}
-                    </MenuItem>
-                  ))}
-                </Select> */}
-              </Grid>
-            </Grid>
+                  }
+              </Select>
+            </FormControl>
+          </Grid>
+
             <br />
             <Grid item xs={12} sm={6}>
             <TextField

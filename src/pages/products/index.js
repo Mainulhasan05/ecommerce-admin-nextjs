@@ -40,7 +40,7 @@ const index = () => {
     }, [dispatch])
 
     const handleDelete = (id) => {
-      console.log(id)
+      
       dispatch(removeCategory(id))
     }
 

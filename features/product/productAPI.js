@@ -21,6 +21,10 @@ export const createProduct = async (data) => {
             toast.error(error?.response?.data?.message)
             useRouter.push('/account-settings')
         }
+        if(error?.response?.status===500){
+            toast.error(error?.response?.data?.message)
+            
+        }
         
         return error;
     }

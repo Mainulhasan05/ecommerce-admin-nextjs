@@ -57,7 +57,7 @@ const TabShopDetails = () => {
     deliveryChargeInsideChapai: 0,
     deliveryChargeOutsideChapai: 0,
   })
-  const [openAlert, setOpenAlert] = useState(true)
+  const [openAlert, setOpenAlert] = useState(false)
   const [imgSrc, setImgSrc] = useState('/images/shop_logo.png')
 
   const onChange = file => {
@@ -189,7 +189,7 @@ const TabShopDetails = () => {
               placeholder='20'
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          {/* <Grid item xs={12} sm={6}>
             <FormControl fullWidth>
               <InputLabel>Status</InputLabel>
               <Select
@@ -200,7 +200,7 @@ const TabShopDetails = () => {
                 <MenuItem value='pending'>Pending</MenuItem>
               </Select>
             </FormControl>
-          </Grid>
+          </Grid> */}
 
 
           {openAlert ? (

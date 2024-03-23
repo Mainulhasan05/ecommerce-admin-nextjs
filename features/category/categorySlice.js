@@ -1,8 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { getCategory, createCategory, deleteCategory, getCategories, updateCategory } from "./categoryAPI";
+import { getCategory, createCategory, deleteCategory, getCategories, updateCategory,getChildCategories,getParentCategories } from "./categoryAPI";
 
 const initialState = {
     categories: [],
+    parentCategories:[],
+    childCategories:[],
     category: null,
     loading: false,
     error: null
@@ -47,6 +49,23 @@ export const removeCategory = createAsyncThunk(
         return response;
     }
 );
+
+export const fetchParentCategories = createAsyncThunk(
+    'seller/fetchParentCategories',
+    async () => {
+        const response = await getParentCategories();
+        return response;
+    }
+);
+
+export const fetchChildCategories = createAsyncThunk(
+    'seller/fetchChildCategories',
+    async (id) => {
+        const response = await getChildCategories(id);
+        return response;
+    }
+);
+
 
 export const categorySlice = createSlice({
     name: 'category',
@@ -99,7 +118,7 @@ export const categorySlice = createSlice({
             })
             .addCase(editCategory.fulfilled, (state, action) => {
                 state.loading = false;
-                state.categories = action.payload?.data;
+                state.categories = state.categories.map(category => category.id === action.payload?.data.id ? action.payload?.data : category);
             })
             .addCase(editCategory.rejected, (state, action) => {
                 state.loading = false;
@@ -115,8 +134,29 @@ export const categorySlice = createSlice({
             .addCase(removeCategory.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
-            }
-        );
+            })
+            .addCase(fetchParentCategories.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(fetchParentCategories.fulfilled, (state, action) => {
+                state.loading = false;
+                state.parentCategories = action.payload?.data;
+            })
+            .addCase(fetchParentCategories.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message;
+            })
+            .addCase(fetchChildCategories.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(fetchChildCategories.fulfilled, (state, action) => {
+                state.loading = false;
+                state.childCategories = action.payload?.data;
+            })
+            .addCase(fetchChildCategories.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message;
+            });
     }
 });
 

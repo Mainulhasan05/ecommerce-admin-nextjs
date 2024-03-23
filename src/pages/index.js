@@ -21,7 +21,9 @@ import StatisticsCard from 'src/views/dashboard/StatisticsCard'
 import WeeklyOverview from 'src/views/dashboard/WeeklyOverview'
 import DepositWithdraw from 'src/views/dashboard/DepositWithdraw'
 import SalesByCountries from 'src/views/dashboard/SalesByCountries'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { Button } from '@mui/material'
+import Link from 'next/link'
 
 export const getServerSideProps = async (context) => {
   // get the token from the request
@@ -43,10 +45,27 @@ export const getServerSideProps = async (context) => {
 
 const Dashboard = () => {
   const dispatch=useDispatch()
+  const {user}=useSelector(state=>state.user)
   dispatch(fetchDashboard())
   return (
     <ApexChartWrapper>
+
       <Grid container spacing={6}>
+      {
+        user && user.hasShop==false && (
+          
+          <Grid item xs={12}>
+            <h4>প্রথমে আপনার শপ তৈরী করুন</h4>
+            {/* create a button name create */}
+            <Link href="/account-settings">
+            <Button type='reset' variant='contained' color='primary'>
+              Create Shop
+            </Button>
+            </Link>
+            
+          </Grid>
+        )
+      }
       <Grid item xs={12}>
         {/* heading Recent Activites */}
         <h4>Recent Activities</h4>
