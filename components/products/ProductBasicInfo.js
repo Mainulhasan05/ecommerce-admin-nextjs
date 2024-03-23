@@ -76,6 +76,7 @@ const ProductBasicInfo = () => {
   const dispatch = useDispatch()
   const { parentCategories,childCategories } = useSelector((state) => state.category)
   const editorRef = useRef(null);
+  const [loading,setLoading]=useState(false)
   useEffect(() => {
     if (parentCategories.length === 0)
       dispatch(fetchParentCategories())
@@ -128,7 +129,7 @@ const ProductBasicInfo = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-
+      setLoading(true)
       const formData = new FormData()
       for (const key in productObj) {
         formData.append(key, productObj[key])
@@ -146,25 +147,23 @@ const ProductBasicInfo = () => {
       if(childCategoryId!=""){
         categoryIds.push(childCategoryId)
       }
-      
-      
-      
       files.forEach((file) => {
         formData.append('images', file);
       });
       formData.set('categoryIds', JSON.stringify(categoryIds))
       const response=await dispatch(addProduct(formData))
-      console.log(response)
+      
       if(response.payload.success){
         toast.success(response?.payload?.message)
       }
       else{
         if(!response?.payload?.message.includes('404')){
           toast.error(response?.payload?.message)
-        }
-        
+        } 
       }
+      setLoading(false)
     } catch (error) {
+      setLoading(false)
       console.log(error)
       // toast.error(error.response.data.message)
     }
@@ -364,21 +363,17 @@ const ProductBasicInfo = () => {
 
 
           <Grid item xs={12}>
-            <Button onClick={(e) => {
-              if (productObj.id) {
-
-                handleUpdate(e)
-              }
-              else {
-
-                handleSubmit(e)
-              }
-            }} variant='contained' sx={{ marginRight: 3.5 }}>
-              Add Product
-            </Button>
-            <Button type='reset' variant='outlined' color='secondary'>
+            {
+              loading ? <Button variant='contained' color='primary' disabled>
+                Adding...
+              </Button> :
+                <Button onClick={handleSubmit} variant='contained' color='primary'>
+                  Add Product
+                </Button>
+            }
+            {/* <Button type='reset' variant='outlined' color='secondary'>
               Reset
-            </Button>
+            </Button> */}
           </Grid>
         </Grid>
       </form>

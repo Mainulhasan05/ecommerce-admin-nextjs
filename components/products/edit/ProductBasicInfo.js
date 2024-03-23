@@ -19,7 +19,7 @@ import TextEditor from '../../text_editor/TextEditor';
 import CardContent from '@mui/material/CardContent'
 import FormControl from '@mui/material/FormControl'
 import Button from '@mui/material/Button'
-import { addProduct } from 'features/product/productSlice'
+import { editProduct } from 'features/product/productSlice'
 // ** Icons Imports
 import Close from 'mdi-material-ui/Close'
 import toast from 'react-hot-toast'
@@ -126,10 +126,11 @@ const ProductBasicInfo = ({product}) => {
       for (const key in productObj) {
         formData.append(key, productObj[key])
       }
+      formData.append('id', product.id)
       files.forEach((file) => {
         formData.append('images', file);
       });
-      const response=await dispatch(addProduct(formData))
+      const response=await dispatch(editProduct(formData))
       console.log(response)
       if(response.payload.success){
         toast.success(response?.payload?.message)
@@ -146,32 +147,7 @@ const ProductBasicInfo = ({product}) => {
     }
   }
   const theme = useTheme();
-  const handleUpdate = async (e) => {
-    e.preventDefault()
-
-    try {
-
-      const formData = new FormData()
-      for (const key in productObj) {
-        formData.append(key, productObj[key])
-      }
-      const imageFile = document.querySelector('input[type="file"]').files[0];
-      formData.set('image', imageFile);
-      if (imageFile) {
-        formData.set('image', imageFile);
-      } else {
-
-      }
-      // /seller/shop, put request
-      const response = await axiosInstance.put('/seller/shop/' + productObj?.id, formData)
-      console.log(response)
-      if (response.status === 200) {
-        toast.success('Shop Updated Successfully')
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
+  
 
 
   return (
@@ -297,7 +273,7 @@ const ProductBasicInfo = ({product}) => {
                 handleSubmit(e)
               }
             }} variant='contained' sx={{ marginRight: 3.5 }}>
-              Add Product
+              Update Product
             </Button>
             <Button type='reset' variant='outlined' color='secondary'>
               Reset
