@@ -117,7 +117,7 @@ const ProductBasicInfo = () => {
 
   const handleChange = (e) => {
     setProductObj({ ...productObj, [e.target.name]: e.target.value })
-    console.log(productObj)
+    
   }
   const handleCategoryChange = async(e) => {
     setParentCategoryId(e.target.value)

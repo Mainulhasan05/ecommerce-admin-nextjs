@@ -24,7 +24,7 @@ import { editProduct } from 'features/product/productSlice'
 import Close from 'mdi-material-ui/Close'
 import toast from 'react-hot-toast'
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchCategories } from 'features/category/categorySlice'
+import { fetchParentCategories,fetchChildCategories } from 'features/category/categorySlice'
 import { OutlinedInput } from '@mui/material'
 import { useTheme } from '@emotion/react'
 import Multiselect from 'multiselect-react-dropdown';
@@ -53,17 +53,27 @@ const ResetButtonStyled = styled(Button)(({ theme }) => ({
     marginTop: theme.spacing(4)
   }
 }))
+function getStyles(name, personName, theme) {
+  return {
+    fontWeight:
+      personName.indexOf(name) === -1
+        ? theme.typography.fontWeightRegular
+        : theme.typography.fontWeightMedium,
+  };
+}
 
 
 const ProductBasicInfo = ({product}) => {
   const dispatch = useDispatch()
-  const { categories } = useSelector((state) => state.category)
+  const { parentCategories,childCategories } = useSelector((state) => state.category)
   const editorRef = useRef(null);
   
   useEffect(() => {
-    if (categories.length === 0)
-      dispatch(fetchCategories())
+    if (parentCategories.length === 0)
+      dispatch(fetchParentCategories())
   }, [dispatch])
+  const [parentCategoryId, setParentCategoryId] = useState('')
+  const [childCategoryId, setChildCategoryId] = useState('')
   const [productObj, setProductObj] = useState({
     name: '',
     description: '',
@@ -85,13 +95,25 @@ const ProductBasicInfo = ({product}) => {
       new_price: product?.new_price,
       categoryIds: product?.categories.map((category)=>category.id)
     })
+    // loop through categoryIds, and match with parentCategories, and set the parentCategoryId
+    product?.categories.forEach((category) => {
+      parentCategories.forEach((parentCategory) => {
+        if (parentCategory.id === category.id) {
+          setParentCategoryId(parentCategory.id)
+          dispatch(fetchChildCategories(parentCategory.id))
+        }
+        else{
+          setChildCategoryId(category.id)
+        }
+      })
+    })
   }, [product])
 
   
   const [openAlert, setOpenAlert] = useState(true)
   const [files, setFiles] = useState([])
   const [imgSrc, setImgSrc] = useState('/images/shop_logo.png')
-
+  const [personName, setPersonName] = useState([]);
   const handleDescriptionChange = (content, editor) => {
     setProductObj({ ...productObj, description: content })
   }
@@ -117,7 +139,11 @@ const ProductBasicInfo = ({product}) => {
   const handleChange = (e) => {
     setProductObj({ ...productObj, [e.target.name]: e.target.value })
   }
-
+  const handleCategoryChange = async(e) => {
+    setParentCategoryId(e.target.value)
+    setChildCategoryId('')
+    dispatch(fetchChildCategories(e.target.value))
+  }
   const handleSubmit = async (e) => {
     e.preventDefault()
     // convert the inputs into form data, send all images and other data to the server
@@ -127,9 +153,22 @@ const ProductBasicInfo = ({product}) => {
         formData.append(key, productObj[key])
       }
       formData.append('id', product.id)
+      if (parentCategoryId === '' || childCategoryId === '') {
+        toast.error('Please select a category')
+        return
+      }
+      let categoryIds = []
+      if(parentCategoryId!=""){
+        categoryIds.push(parentCategoryId)
+      }
+      
+      if(childCategoryId!=""){
+        categoryIds.push(childCategoryId)
+      }
       files.forEach((file) => {
         formData.append('images', file);
       });
+      formData.set('categoryIds', JSON.stringify(categoryIds))
       const response=await dispatch(editProduct(formData))
       console.log(response)
       if(response.payload.success){
@@ -157,10 +196,10 @@ const ProductBasicInfo = ({product}) => {
           <Grid item xs={12} sx={{ marginTop: 4.8, marginBottom: 3 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
               {
-                productObj?.images?.length > 0 ?
-                  productObj?.images?.map((image, index) => (
-                    <ImgStyled key={index} src={process.env.API_URL+image.url} alt='user-avatar' />
-                  ))
+                files.length > 0 ?
+                files.map((file, index) => (
+                  <ImgStyled key={index} src={URL.createObjectURL(file)} alt='user-avatar' />
+                ))
                   :
                   <ImgStyled src={imgSrc} alt='user-avatar' />
               }
@@ -189,7 +228,7 @@ const ProductBasicInfo = ({product}) => {
           </Grid>
 
           <Grid item xs={12} sm={6}>
-            <TextField value={productObj.name} name="name" onChange={handleChange} fullWidth label='Product Name' placeholder='Cotton Panjabi for men' defaultValue='' />
+            <TextField value={productObj.name} name="name" onChange={handleChange} fullWidth label='Product Name' placeholder='Cotton Panjabi for men'  />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField value={productObj.quantity} name='quantity' onChange={handleChange} fullWidth label='Product Quantity' placeholder='10' />
@@ -229,7 +268,8 @@ const ProductBasicInfo = ({product}) => {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={6}></Grid>
+          {/* <Grid item xs={12} sm={6}>
           <FormControl fullWidth>
               <InputLabel>Product Category</InputLabel>
               <Select
@@ -247,6 +287,52 @@ const ProductBasicInfo = ({product}) => {
                   ))
                 }
                 
+              </Select>
+            </FormControl>
+          </Grid> */}
+                    <Grid item xs={12} sm={6}>
+            <FormControl fullWidth>
+              <InputLabel>Product Type</InputLabel>
+              <Select
+              
+                onChange={handleCategoryChange}
+                value={parentCategoryId}
+                label='Product Type' >
+                  {
+                    parentCategories.map((cat) => (
+                      <MenuItem
+                        key={cat?.id}
+                        value={cat.id}
+                        style={getStyles(cat, personName, theme)}
+                      >
+                        {cat?.name}
+                      </MenuItem>
+                    ))
+
+                  }
+              </Select>
+            </FormControl>
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth>
+              <InputLabel>Categories</InputLabel>
+              <Select
+                
+                onChange={(e)=>setChildCategoryId(e.target.value)}
+                value={childCategoryId}
+                label='Categories' >
+                  {
+                    childCategories.map((cat) => (
+                      <MenuItem
+                        key={cat?.id}
+                        value={cat.id}
+                        style={getStyles(cat, personName, theme)}
+                      >
+                        {cat?.name}
+                      </MenuItem>
+                    ))
+                  }
               </Select>
             </FormControl>
           </Grid>
