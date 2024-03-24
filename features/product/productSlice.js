@@ -93,8 +93,8 @@ export const productSlice = createSlice({
         .addCase(editProduct.fulfilled, (state, action) => {
             state.loading = false;
             state.products = state.products.map((product) => {
-                if(product.id === action.payload.id){
-                    return action.payload;
+                if(product.id === action.payload?.data.id){
+                    return action.payload.data;
                 }
                 return product;
             });
@@ -104,7 +104,7 @@ export const productSlice = createSlice({
         })
         .addCase(removeProduct.fulfilled, (state, action) => {
             state.loading = false;
-            state.products = state.products.filter((product) => product.id !== action.payload.id);
+            state.products = state.products.filter((product) => product.id !== action.payload?.data.id);
         })
     }
 });

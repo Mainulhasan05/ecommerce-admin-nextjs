@@ -95,7 +95,7 @@ const ProductBasicInfo = ({product}) => {
       new_price: product?.new_price,
       categoryIds: product?.categories.map((category)=>category.id)
     })
-    // loop through categoryIds, and match with parentCategories, and set the parentCategoryId
+    
     product?.categories.forEach((category) => {
       parentCategories.forEach((parentCategory) => {
         if (parentCategory.id === category.id) {
@@ -107,7 +107,7 @@ const ProductBasicInfo = ({product}) => {
         }
       })
     })
-  }, [product])
+  }, [product,parentCategories])
 
   
   const [openAlert, setOpenAlert] = useState(true)
@@ -119,11 +119,8 @@ const ProductBasicInfo = ({product}) => {
   }
 
   const onChange = (event) => {
-    // Handle file selection here
     const files = Array.from(event.target.files);
-    // only take maximum of 5 images, and check if the file is an image, and the size is less than 800K
     const filteredFiles = files.filter((file) => file.type.includes('image') && file.size < 800000);
-    // if length of filteredFiles and files are not the same, then some files are not images or are too large, show a toast
     if (filteredFiles.length !== files.length) {
       toast.error('Only images are allowed, and the size of the image should be less than 800K');
     }

@@ -2,13 +2,14 @@
 
 import { Box, Button, ListItem, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Typography } from '@mui/material'
 import Link from 'next/link';
-import { fetchCategories,removeCategory } from 'features/category/categorySlice';
+
 import React, { useEffect,  useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchProducts } from 'features/product/productSlice';
+import { fetchProducts, removeProduct } from 'features/product/productSlice';
 const index = () => {
   const dispatch = useDispatch()
   const {categories}= useSelector((state) => state.category)
+  const [demoProduct, setDemoProduct] = useState({})
   const {products} = useSelector((state) => state.product)
     const headerStyle = {
         display: 'flex',
@@ -41,14 +42,38 @@ const index = () => {
 
     const handleDelete = (id) => {
       
-      dispatch(removeCategory(id))
+      dispatch(removeProduct(id))
     }
 
 
     return (
         <div>
-            {/* SHOW Category text and add a Add button and the end of the screen */}
+            
+
+
+
+<div class="modal fade" id="productDelete" tabindex="-1" aria-labelledby="productDeleteLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="productDeleteLabel">Delete Product</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete {demoProduct?.name}?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+        <button onClick={()=>{
+          handleDelete(demoProduct.id)
+        
+        }} data-bs-dismiss="modal" type="button" class="btn btn-danger">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
             <div style={headerStyle}>
+              
                 <Typography variant="h6" style={categoryTextStyle}>
                     Products
                 </Typography>
@@ -119,8 +144,9 @@ const index = () => {
                               Edit
                             </Button>
                           </Link>
-                          <Button onClick={()=>{
-                            handleDelete(product.id)
+                          <Button data-bs-toggle="modal" data-bs-target="#productDelete" onClick={()=>{
+                            // handleDelete(product.id)
+                            setDemoProduct(product)
                             
                           }} variant="contained" color="error">
                             Delete
