@@ -2,13 +2,13 @@
 
 import { Box, Button, ListItem, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Typography } from '@mui/material'
 import Link from 'next/link';
-import { fetchCategories, removeCategory } from 'features/category/categorySlice';
+import { fetchOrders } from 'features/orders/orderSlice';
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 
 const index = () => {
   const dispatch = useDispatch()
-  const { categories } = useSelector((state) => state.category)
+  const { orders } = useSelector((state) => state.order)
   const headerStyle = {
     display: 'flex',
     justifyContent: 'space-between',
@@ -34,26 +34,22 @@ const index = () => {
   }
 
   useEffect(() => {
-    if (categories.length === 0)
-      dispatch(fetchCategories())
+    
+      dispatch(fetchOrders())
   }, [dispatch])
 
-  const handleDelete = (id) => {
-    console.log(id)
-    dispatch(removeCategory(id))
-  }
-
+  
 
   return (
     <div>
       
       <div style={headerStyle}>
         <Typography variant="h6" style={categoryTextStyle}>
-          Category Text
+          Your Orders
         </Typography>
         <Link href="/category/create">
           <Button variant="contained" color="primary">
-            Add Category
+            Add Order
           </Button>
         </Link>
       </div>
@@ -66,17 +62,17 @@ const index = () => {
                   Id
                 </TableCell>
                 <TableCell sx={{ minWidth: 100 }}>
-                  Image
+                  Customer Name
                 </TableCell>
                 <TableCell sx={{ minWidth: 100 }}>
-                  Name
+                  Customer Phone
 
                 </TableCell>
                 <TableCell sx={{ minWidth: 100 }}>
-                  Description
+                  Date
                 </TableCell>
                 <TableCell sx={{ minWidth: 100 }}>
-                  Parent
+                  Total Amount
                 </TableCell>
 
                 <TableCell sx={{ minWidth: 100 }}>
@@ -87,38 +83,32 @@ const index = () => {
             <TableBody>
 
               {
-                categories.map((category) => (
-                  <TableRow key={category.id}>
-                    <TableCell>
-                      {category.id}
+                orders.map((order) => (
+                  <TableRow key={order.id}>
+                     <TableCell>
+                      {order.id}
                     </TableCell>
                     <TableCell>
-                      <img src={process.env.API_URL + category.image} alt={category.name} style={{ width: '50px' }} />
+                      {order?.customerName}
                     </TableCell>
                     <TableCell>
-                      {category.name}
+                      {order?.customerPhoneNumber}
                     </TableCell>
                     <TableCell>
-                      {category.description}
+                      {new Date(order?.createdAt).toLocaleDateString()}
                     </TableCell>
                     <TableCell>
-                      {category.parentId}
+                      {order?.totalAmount}
                     </TableCell>
                     <TableCell>
                       <Stack direction="row" spacing={2}>
-                        <Link href={`/category/edit/${category.id}`}>
+                        
                           <Button variant="contained" color="primary">
-                            Edit
+                            View Details
                           </Button>
-                        </Link>
-                        <Button onClick={() => {
-                          handleDelete(category.id)
-                          console.log("huss")
-                        }} variant="contained" color="error">
-                          Delete
-                        </Button>
+                        
                       </Stack>
-                    </TableCell>
+                    </TableCell> 
                   </TableRow>
                 ))
               }

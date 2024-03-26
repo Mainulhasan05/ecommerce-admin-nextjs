@@ -29,7 +29,7 @@ const AppBarContent = props => {
     }
     if(user){
       if(user.hasShop==false){
-        toast.error('You do not have a shop yet. Please create a shop to continue')
+        toast.error('প্রথমে আপনার শপ বা পেজের নাম দিন।')
         router.push('/account-settings')
       }
     }
