@@ -83,37 +83,21 @@ const OrderDetails = () => {
               </Typography>
             </Grid>
             <Grid item xs={12} sm={6}>
+              <InputLabel htmlFor='form-layouts-separator-email'>Customer Name</InputLabel>
               <TextField fullWidth   value={order?.customerName}  />
             </Grid>
             <Grid item xs={12} sm={6}>
+            <InputLabel htmlFor='form-layouts-separator-email'>Customer Phone</InputLabel>
               <TextField fullWidth type='text'  value={order?.customerPhoneNumber} />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                {/* <InputLabel htmlFor='form-layouts-separator-password'>Customer Address</InputLabel> */}
-                <OutlinedInput
-                  placeholder='Customer Address'
-                  value={order?.customerAddress}
-                  id='form-layouts-separator-password'
-                  onChange={handlePasswordChange('password')}
-                  type="text"
-                  
-                />
-              </FormControl>
+            <InputLabel htmlFor='form-layouts-separator-email'>Customer Address</InputLabel>
+              <TextField fullWidth type='text'  value={order?.customerAddress} />
             </Grid>
-            <Grid item xs={12} sm={6}></Grid>
-            <Grid item xs={12} sm={12}>
-              <FormControl fullWidth>
-                {/* <InputLabel htmlFor='form-layouts-separator-password-2'>Customer Note</InputLabel> */}
-                <OutlinedInput
-                  value={order?.note}
-                  placeholder='Customer Note'
-                  id='form-layouts-separator-password-2'
-                  onChange={handleConfirmChange('password2')}
-                  type='text'
-                  
-                />
-              </FormControl>
+
+            <Grid item xs={12} sm={6}>
+            <InputLabel htmlFor='form-layouts-separator-email'>Customer Note</InputLabel>
+              <TextField fullWidth type='text'  value={order?.note} />
             </Grid>
             <Grid item xs={12}>
               <Divider sx={{ marginBottom: 0 }} />

@@ -34,8 +34,9 @@ const index = () => {
   }
 
   useEffect(() => {
-    
+    if(orders.length === 0)
       dispatch(fetchOrders())
+      
   }, [dispatch])
 
   
@@ -71,9 +72,9 @@ const index = () => {
                 <TableCell sx={{ minWidth: 100 }}>
                   Date
                 </TableCell>
-                <TableCell sx={{ minWidth: 100 }}>
+                {/* <TableCell sx={{ minWidth: 100 }}>
                   Total Amount
-                </TableCell>
+                </TableCell> */}
 
                 <TableCell sx={{ minWidth: 100 }}>
                   Actions
@@ -97,9 +98,9 @@ const index = () => {
                     <TableCell>
                       {new Date(order?.createdAt).toLocaleDateString()}
                     </TableCell>
-                    <TableCell>
+                    {/* <TableCell>
                       {order?.totalAmount}
-                    </TableCell>
+                    </TableCell> */}
                     <TableCell>
                       <Stack direction="row" spacing={2}>
                         

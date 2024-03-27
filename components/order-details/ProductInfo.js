@@ -6,36 +6,55 @@ import TextField from '@mui/material/TextField'
 import FormControl from '@mui/material/FormControl'
 import OutlinedInput from '@mui/material/OutlinedInput'
 import InputLabel from '@mui/material/InputLabel'
+import { Divider } from '@mui/material'
 
-const ProductInfo = ({item}) => {
+const ProductInfo = ({ item }) => {
   return (
     <>
-            <Grid item xs={12}>
-              <Typography variant='body2' sx={{ fontWeight: 600 }}>
-                2. Product Info
-              </Typography>
-            </Grid>
-            
-            <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-            <TextField value={item?.product?.name} name="name"  fullWidth label='Product Name' placeholder='Cotton Panjabi for men' defaultValue='' />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField value={item?.quantity} name="quantity"  fullWidth label='Product Quantity' placeholder='Quantity' defaultValue='' />
-          </Grid>
-      <Grid item xs={12} sm={6}>
-        <FormControl fullWidth>
-          <InputLabel htmlFor="unit-price">Unit Price</InputLabel>
-          <TextField
-            id="unit-price"
-            fullWidth
-            placeholder="Unit Price"
-            value={item?.unitPrice}
-          />
-        </FormControl>
+      <Grid item xs={12}>
+        <Typography variant='body2' sx={{ fontWeight: 600 }}>
+          2. Product Info
+        </Typography>
       </Grid>
-    </Grid>
-            </>
+
+      <Grid item xs={12}>
+        <Divider sx={{ marginBottom: 0 }} />
+      </Grid>
+      <br />
+
+      <Grid container spacing={6}>
+        <Grid item xs={12} sm={6}>
+          
+          <img src={process.env.API_URL+ item?.product?.image} alt={item?.product?.name} style={{ width: '100%', height: 'auto' }} />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <TextField value={item?.product?.name} name="name" fullWidth label='Product Name' placeholder='Cotton Panjabi for men' defaultValue='' />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <TextField value={item?.quantity} name="quantity" fullWidth label='Product Quantity' placeholder='Quantity' defaultValue='' />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <TextField value={item?.unitPrice} name="unit_price" fullWidth label='Unit Price' placeholder='Quantity' defaultValue='' />
+        </Grid>
+
+        {/* Give a summary, totalPrice, */}
+        <Grid item xs={12}>
+          <Divider sx={{ marginBottom: 0 }} />
+        </Grid>
+
+        <Grid item xs={12} sm={6}>
+        <Typography variant="h6" >
+          Total Price
+        </Typography>
+        </Grid>
+        <Grid item xs={12} sm={6}>
+        <Typography variant="h6" >
+        ৳{item?.totalAmount}
+        </Typography>
+        </Grid>
+        
+      </Grid>
+    </>
   )
 }
 
