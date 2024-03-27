@@ -103,9 +103,11 @@ const index = () => {
                     <TableCell>
                       <Stack direction="row" spacing={2}>
                         
-                          <Button variant="contained" color="primary">
-                            View Details
-                          </Button>
+                          <Link href={`/order-details/${order.id}`}>
+                            <Button variant="contained" color="primary">
+                              View
+                            </Button>
+                          </Link>
                         
                       </Stack>
                     </TableCell> 

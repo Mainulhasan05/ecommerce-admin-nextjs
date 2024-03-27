@@ -8,4 +8,13 @@ export const getOrders = async () => {
         throw error;
     }
     }
+
+export const getOrder = async (id) => {
+    try {
+        const response = await axiosInstance.get(`/seller/order/${id}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+    }
     
