@@ -16,10 +16,9 @@ import CardActions from '@mui/material/CardActions'
 import FormControl from '@mui/material/FormControl'
 import OutlinedInput from '@mui/material/OutlinedInput'
 import InputAdornment from '@mui/material/InputAdornment'
-import Select from '@mui/material/Select'
 
-// ** Third Party Imports
-import DatePicker from 'react-datepicker'
+import ProductInfo from './ProductInfo'
+
 
 // ** Icons Imports
 import EyeOutline from 'mdi-material-ui/EyeOutline'
@@ -32,9 +31,6 @@ const CustomInput = forwardRef((props, ref) => {
 
 const OrderDetails = () => {
     const {order}=useSelector(state=>state.order)
-  // ** States
-  const [language, setLanguage] = useState([])
-  const [date, setDate] = useState(null)
 
   const [values, setValues] = useState({
     password: '',
@@ -87,16 +83,16 @@ const OrderDetails = () => {
               </Typography>
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField fullWidth label='Customer Name'  value={order?.customerName}  />
+              <TextField fullWidth   value={order?.customerName}  />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField fullWidth type='text' label='Customer Phone' value={order?.customerPhoneNumber} />
+              <TextField fullWidth type='text'  value={order?.customerPhoneNumber} />
             </Grid>
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
-                <InputLabel htmlFor='form-layouts-separator-password'>Customer Address</InputLabel>
+                {/* <InputLabel htmlFor='form-layouts-separator-password'>Customer Address</InputLabel> */}
                 <OutlinedInput
-                  label='Customer Address'
+                  placeholder='Customer Address'
                   value={order?.customerAddress}
                   id='form-layouts-separator-password'
                   onChange={handlePasswordChange('password')}
@@ -108,10 +104,10 @@ const OrderDetails = () => {
             <Grid item xs={12} sm={6}></Grid>
             <Grid item xs={12} sm={12}>
               <FormControl fullWidth>
-                <InputLabel htmlFor='form-layouts-separator-password-2'>Customer Note</InputLabel>
+                {/* <InputLabel htmlFor='form-layouts-separator-password-2'>Customer Note</InputLabel> */}
                 <OutlinedInput
                   value={order?.note}
-                  label='Customer Note'
+                  placeholder='Customer Note'
                   id='form-layouts-separator-password-2'
                   onChange={handleConfirmChange('password2')}
                   type='text'
@@ -122,70 +118,15 @@ const OrderDetails = () => {
             <Grid item xs={12}>
               <Divider sx={{ marginBottom: 0 }} />
             </Grid>
-            <Grid item xs={12}>
-              <Typography variant='body2' sx={{ fontWeight: 600 }}>
-                2. Product Info
-              </Typography>
-            </Grid>
             
-            <Grid item xs={12} sm={6}>
-              <TextField fullWidth label='First Name' placeholder='Leonard' />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField fullWidth label='Last Name' placeholder='Carter' />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel id='form-layouts-separator-select-label'>Country</InputLabel>
-                <Select
-                  label='Country'
-                  defaultValue=''
-                  id='form-layouts-separator-select'
-                  labelId='form-layouts-separator-select-label'
-                >
-                  <MenuItem value='UK'>UK</MenuItem>
-                  <MenuItem value='USA'>USA</MenuItem>
-                  <MenuItem value='Australia'>Australia</MenuItem>
-                  <MenuItem value='Germany'>Germany</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel id='form-layouts-separator-multiple-select-label'>Language</InputLabel>
-                <Select
-                  multiple
-                  value={language}
-                  onChange={handleSelectChange}
-                  id='form-layouts-separator-multiple-select'
-                  labelId='form-layouts-separator-multiple-select-label'
-                  input={<OutlinedInput label='Language' id='select-multiple-language' />}
-                >
-                  <MenuItem value='English'>English</MenuItem>
-                  <MenuItem value='French'>French</MenuItem>
-                  <MenuItem value='Spanish'>Spanish</MenuItem>
-                  <MenuItem value='Portuguese'>Portuguese</MenuItem>
-                  <MenuItem value='Italian'>Italian</MenuItem>
-                  <MenuItem value='German'>German</MenuItem>
-                  <MenuItem value='Arabic'>Arabic</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <DatePicker
-                selected={date}
-                showYearDropdown
-                showMonthDropdown
-                placeholderText='MM-DD-YYYY'
-                customInput={<CustomInput />}
-                id='form-layouts-separator-date'
-                onChange={date => setDate(date)}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField fullWidth label='Phone No.' placeholder='+1-123-456-8790' />
-            </Grid>
+            {/* Product Info */}
+            {
+              order?.orderItems?.map((item, index) => (
+                <ProductInfo key={index} item={item} />
+              ))
+            }
           </Grid>
+          
         </CardContent>
         <Divider sx={{ margin: 0 }} />
         <CardActions>
