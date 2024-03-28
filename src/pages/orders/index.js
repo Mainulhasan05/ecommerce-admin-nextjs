@@ -63,6 +63,9 @@ const index = () => {
                   Id
                 </TableCell>
                 <TableCell sx={{ minWidth: 100 }}>
+                  Actions
+                </TableCell>
+                <TableCell sx={{ minWidth: 100 }}>
                   Customer Name
                 </TableCell>
                 <TableCell sx={{ minWidth: 100 }}>
@@ -76,9 +79,7 @@ const index = () => {
                   Total Amount
                 </TableCell> */}
 
-                <TableCell sx={{ minWidth: 100 }}>
-                  Actions
-                </TableCell>
+                
               </TableRow>
             </TableHead>
             <TableBody>
@@ -89,6 +90,17 @@ const index = () => {
                      <TableCell>
                       {order.id}
                     </TableCell>
+                    <TableCell>
+                      <Stack direction="row" spacing={2}>
+                        
+                          <Link href={`/order-details/${order.id}`}>
+                            <Button variant="contained" color="primary">
+                              View 
+                            </Button>
+                          </Link>
+                        
+                      </Stack>
+                    </TableCell> 
                     <TableCell>
                       {order?.customerName}
                     </TableCell>
@@ -101,17 +113,7 @@ const index = () => {
                     {/* <TableCell>
                       {order?.totalAmount}
                     </TableCell> */}
-                    <TableCell>
-                      <Stack direction="row" spacing={2}>
-                        
-                          <Link href={`/order-details/${order.id}`}>
-                            <Button variant="contained" color="primary">
-                              View
-                            </Button>
-                          </Link>
-                        
-                      </Stack>
-                    </TableCell> 
+                    
                   </TableRow>
                 ))
               }
