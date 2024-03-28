@@ -50,6 +50,7 @@ const ResetButtonStyled = styled(Button)(({ theme }) => ({
 const TabShopDetails = () => {
   const dispatch=useDispatch()
   const {shop}=useSelector(state=>state.user)
+  const [loading,setLoading]=useState(false)
   const [shopObj, setShopObj] = useState({
     name: '',
     description:'',
@@ -85,23 +86,25 @@ const TabShopDetails = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      // convert the inputs into form data
+      setLoading(true)
       const formData = new FormData()
       for (const key in shopObj) {
         formData.append(key, shopObj[key])
       }
-      // take the image from the state and append it to the form data
+      
       const imageFile = document.querySelector('input[type="file"]').files[0];
       formData.append('image', imageFile);
-      // /seller/shop, post request
+      
       const response = await axiosInstance.post('/seller/shop', formData)
-      console.log(response)
+      
       if(response.status===201){
         toast.success(response.data?.message)
         setShopObj(response.data?.data)
       }
+      setLoading(false)
     } catch (error) {
       console.log(error)
+      setLoading(false)
     }
   }
 
@@ -123,7 +126,7 @@ const TabShopDetails = () => {
     }
       // /seller/shop, put request
       const response = await axiosInstance.put('/seller/shop/'+shopObj?.id, formData)
-      console.log(response)
+      
       if(response.status===200){
         toast.success('Shop Updated Successfully')
       }
@@ -135,6 +138,22 @@ const TabShopDetails = () => {
 
   return (
     <CardContent>
+      {/* note, upload shop logo */}
+      <Typography variant='p' sx={{ mb: 3 }}>
+        {
+          (!shopObj.id && shopObj.name=='' ) &&
+          'শপ / পেজের লোগো বা প্রোফাইলের ছবি আপলোড করুন'
+        }
+      </Typography>
+      {/* link to the shop */}
+      <Typography variant='p' sx={{ mb: 3 }}>
+        {
+          shopObj.id &&
+          <Link href={'https://suchonamart.com/shop/'+shopObj?.slug} target='_blank'>
+            View Shop
+          </Link>
+        }
+      </Typography>
       <form>
         <Grid container spacing={7}>
           <Grid item xs={12} sx={{ marginTop: 4.8, marginBottom: 3 }}>
@@ -189,18 +208,7 @@ const TabShopDetails = () => {
               placeholder='20'
             />
           </Grid>
-          {/* <Grid item xs={12} sm={6}>
-            <FormControl fullWidth>
-              <InputLabel>Status</InputLabel>
-              <Select
-              value={shopObj.status}
-                label='Status'  inputProps={{ readOnly: true }}>
-                <MenuItem value='active'>Active</MenuItem>
-                <MenuItem value='inactive'>Inactive</MenuItem>
-                <MenuItem value='pending'>Pending</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid> */}
+          
 
 
           {openAlert ? (
@@ -223,18 +231,29 @@ const TabShopDetails = () => {
           ) : null}
 
           <Grid item xs={12}>
-            <Button onClick={(e)=>{
-              if(shopObj.id){
-                console.log("update")
-                handleUpdate(e)
-              }
-              else{
-                console.log("submit")
-                handleSubmit(e)
-              }
-            }} variant='contained' sx={{ marginRight: 3.5 }}>
-              Save Changes
+            {
+              shopObj.id?
+              <Button
+              type='submit'
+              onClick={handleUpdate}
+              variant='contained'
+              color='primary'
+              disabled={loading}
+            >
+              Update Shop
             </Button>
+            :
+            <Button
+              type='submit'
+              onClick={handleSubmit}
+              variant='contained'
+              color='primary'
+              disabled={loading}
+            >
+              Save Shop
+            </Button>
+
+            }
             <Button type='reset' variant='outlined' color='secondary'>
               Reset
             </Button>

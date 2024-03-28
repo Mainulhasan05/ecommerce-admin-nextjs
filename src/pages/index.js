@@ -29,6 +29,7 @@ export const getServerSideProps = async (context) => {
   // get the token from the request
   const token = context.req.cookies.token
   
+  
   if (!token || token === 'null' || token==='undefined') {
     return {
       redirect: {
@@ -45,7 +46,8 @@ export const getServerSideProps = async (context) => {
 
 const Dashboard = () => {
   const dispatch=useDispatch()
-  const {user}=useSelector(state=>state.user)
+  const {user,shop}=useSelector(state=>state.user)
+  
   dispatch(fetchDashboard())
   return (
     <ApexChartWrapper>
@@ -55,7 +57,9 @@ const Dashboard = () => {
         user && user.hasShop==false && (
           
           <Grid item xs={12}>
-            <h4>প্রথমে আপনার শপ তৈরী করুন</h4>
+            {
+              (user && !shop) && <h4>প্রথমে আপনার শপ তৈরী করুন</h4>
+            }
             {/* create a button name create */}
             <Link href="/account-settings">
             <Button type='reset' variant='contained' color='primary'>

@@ -28,6 +28,7 @@ import { fetchCategories } from 'features/category/categorySlice'
 import { OutlinedInput } from '@mui/material'
 import { useTheme } from '@emotion/react'
 import { fetchParentCategories,fetchChildCategories } from 'features/category/categorySlice'
+import { useRouter } from 'next/router'
 
 const ImgStyled = styled('img')(({ theme }) => ({
   width: 120,
@@ -76,6 +77,7 @@ const ProductBasicInfo = () => {
   const dispatch = useDispatch()
   const { parentCategories,childCategories } = useSelector((state) => state.category)
   const editorRef = useRef(null);
+  const router=useRouter()
   const [loading,setLoading]=useState(false)
   useEffect(() => {
     if (parentCategories.length === 0)
@@ -85,10 +87,10 @@ const ProductBasicInfo = () => {
   const [productObj, setProductObj] = useState({
     name: '',
     description: '',
-    quantity: 10,
+    quantity: 1,
     status: 'active',
-    old_price: 80,
-    new_price: 60,
+    old_price: '',
+    new_price: '',
     categoryIds: [],
   })
   const [parentCategoryId, setParentCategoryId] = useState('')
@@ -155,6 +157,7 @@ const ProductBasicInfo = () => {
       
       if(response.payload.success){
         toast.success(response?.payload?.message)
+        router.push('/products')
       }
       else{
         if(!response?.payload?.message.includes('404')){

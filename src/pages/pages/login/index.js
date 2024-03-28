@@ -259,7 +259,7 @@ const LoginPage = ({login_form,dictionary}) => {
             </Button>
             }
             <br />
-            <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center',marginTop:10 }}>
               <Typography variant='body2' sx={{ marginRight: 2 }}>
                 {dictionary?.login_form?.new_here}
               </Typography>
