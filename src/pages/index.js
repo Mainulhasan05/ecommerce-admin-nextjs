@@ -51,8 +51,21 @@ const Dashboard = () => {
   dispatch(fetchDashboard())
   return (
     <ApexChartWrapper>
+      <Grid className='mb-4' item xs={12}>
+        {/* invite them to join our facebook group and another link to our facebook page */}
+        <h4>Join Our Facebook Group</h4>
+        <Button variant='contained' color='primary' href='https://www.facebook.com/groups/962041555409574'>
+          Join Group
+        </Button>
+        {/* give a margin between them */}
+
+        <Button className='mx-4' variant='contained' color='primary' href='https://www.facebook.com/SuchonaMartOfficial'>
+          Like Page
+        </Button>
+      </Grid>
 
       <Grid container spacing={6}>
+
       {
         user && user.hasShop==false && (
           
