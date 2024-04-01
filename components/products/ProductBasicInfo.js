@@ -104,7 +104,7 @@ const ProductBasicInfo = () => {
 
   const onChange = (event) => {
     const files = Array.from(event.target.files);
-    const filteredFiles = files.filter((file) => file.type.includes('image') && file.size < 800000);
+    const filteredFiles = files.filter((file) => file.type.includes('image') && file.size < 10 * 1024*1024);
     if (filteredFiles.length !== files.length) {
       toast.error('Only images are allowed, and the size of the image should be less than 800K');
     }
@@ -139,6 +139,7 @@ const ProductBasicInfo = () => {
       
       if (parentCategoryId === '' || childCategoryId === '') {
         toast.error('Please select a category')
+        setLoading(false)
         return
       }
       let categoryIds = []
@@ -224,7 +225,7 @@ const ProductBasicInfo = () => {
                   Reset
                 </ResetButtonStyled>
                 <Typography variant='body2' sx={{ marginTop: 5 }}>
-                  Allowed PNG or JPEG. Max size of 800K. <b>"Max: 5 images, 800K each."</b>
+                  Allowed PNG or JPEG. Max size of 10MB. <b>"Max: 5 images, 10MB each."</b>
                 </Typography>
               </Box>
             </Box>

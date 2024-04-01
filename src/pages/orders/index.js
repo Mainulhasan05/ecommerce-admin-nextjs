@@ -48,11 +48,11 @@ const index = () => {
         <Typography variant="h6" style={categoryTextStyle}>
           Your Orders
         </Typography>
-        <Link href="/category/create">
+        {/* <Link href="/category/create">
           <Button variant="contained" color="primary">
             Add Order
           </Button>
-        </Link>
+        </Link> */}
       </div>
       <Paper sx={{ width: '100%', overflow: 'hidden' }}>
         <TableContainer sx={{ maxHeight: 440 }}>
